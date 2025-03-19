@@ -8,6 +8,7 @@
 .wp-entry-index-search form {
     display: flex;
     align-items: center;
+    padding:20px 0;
 }
 
 .wp-entry-index-search input[type="search"] {
@@ -91,7 +92,7 @@
 }
 
 .wp-entry-index-form-group input {
-    width: 100%;
+    
     padding: 8px;
     box-sizing: border-box;
 }
