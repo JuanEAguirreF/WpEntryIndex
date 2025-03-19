@@ -20,6 +20,29 @@ class WP_Entry_Index_Shortcode {
     public function __construct() {
         // Registrar shortcode
         add_shortcode('wp_entry_index', array($this, 'render_shortcode'));
+        
+        // Registrar scripts y estilos
+        add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
+    }
+    
+    // Registrar scripts y estilos
+    public function register_scripts() {
+        // Registrar y encolar CSS
+        wp_register_style(
+            'wp-entry-index-public',
+            WP_ENTRY_INDEX_PLUGIN_URL . 'assets/css/public.css',
+            array(),
+            WP_ENTRY_INDEX_VERSION
+        );
+        
+        // Registrar JavaScript
+        wp_register_script(
+            'wp-entry-index-public',
+            WP_ENTRY_INDEX_PLUGIN_URL . 'assets/js/public.js',
+            array('jquery'),
+            WP_ENTRY_INDEX_VERSION,
+            true
+        );
     }
     
     // Renderizar shortcode
@@ -41,11 +64,21 @@ class WP_Entry_Index_Shortcode {
             return '<p>' . __('No hay entradas disponibles.', 'wp-entry-index') . '</p>';
         }
         
+        // Encolar estilos y scripts
+        wp_enqueue_style('wp-entry-index-public');
+        wp_enqueue_script('wp-entry-index-public');
+        
         // Iniciar buffer de salida
         ob_start();
         
         // Abrir contenedor
         echo '<div class="wp-entry-index-container">';
+        
+        // Agregar buscador
+        echo '<div class="wp-entry-index-search-container">';
+        echo '<input type="text" id="wp-entry-index-search-input" placeholder="' . esc_attr__('Buscar...', 'wp-entry-index') . '">';
+        echo '<ul id="wp-entry-index-autocomplete-results" style="display: none;"></ul>';
+        echo '</div>';
         
         // Abrir lista
         echo '<ul class="wp-entry-index-list">';

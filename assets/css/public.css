@@ -6,6 +6,73 @@
     border: 1px solid #e5e5e5;
 }
 
+/* Estilos para el buscador */
+.wp-entry-index-search-container {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+#wp-entry-index-search-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+#wp-entry-index-search-input:focus {
+    outline: none;
+    border-color: #0073aa;
+    box-shadow: 0 0 3px rgba(0, 115, 170, 0.3);
+}
+
+/* Estilos para el autocompletado */
+#wp-entry-index-autocomplete-results {
+    position: absolute;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+}
+
+#wp-entry-index-autocomplete-results li {
+    padding: 8px 12px;
+    cursor: pointer;
+    list-style: none;
+    border-bottom: 1px solid #eee;
+}
+
+#wp-entry-index-autocomplete-results li:last-child {
+    border-bottom: none;
+}
+
+#wp-entry-index-autocomplete-results li:hover {
+    background-color: #f5f5f5;
+}
+
+#wp-entry-index-autocomplete-results li.autocomplete-item {
+    color: #333;
+}
+
+#wp-entry-index-autocomplete-results li.no-results {
+    color: #888;
+    font-style: italic;
+    cursor: default;
+}
+
+#wp-entry-index-autocomplete-results li.show-more {
+    color: #0073aa;
+    font-weight: bold;
+    text-align: center;
+}
+
 .wp-entry-index-list {
     list-style-type: none;
     margin: 0;
