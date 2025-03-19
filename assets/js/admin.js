@@ -5,13 +5,17 @@
     $(document).ready(function() {
         // Referencias a elementos del DOM
         const $modal = $('#wp-entry-index-modal');
+        const $importModal = $('#wp-entry-index-import-modal');
         const $form = $('#wp-entry-index-form');
+        const $importForm = $('#wp-entry-index-import-form');
         const $modalTitle = $('#wp-entry-index-modal-title');
         const $idField = $('#wp-entry-index-id');
         const $nameField = $('#wp-entry-index-name');
         const $urlField = $('#wp-entry-index-url');
         const $tableBody = $('#wp-entry-index-table-body');
         const $notice = $('#wp-entry-index-notice');
+        const $importResults = $('#wp-entry-index-import-results');
+        const $importSummary = $('#wp-entry-index-import-summary');
         const rowTemplate = $('#wp-entry-index-row-template').html();
         
         // Función para mostrar notificaciones
@@ -40,6 +44,20 @@
             $modal.hide();
         }
         
+        // Función para abrir el modal de importación
+        function openImportModal() {
+            $importResults.hide();
+            $importSummary.empty();
+            $importForm[0].reset();
+            $importModal.show();
+        }
+        
+        // Función para cerrar el modal de importación
+        function closeImportModal() {
+            $importForm[0].reset();
+            $importModal.hide();
+        }
+        
         // Función para renderizar una fila
         function renderRow(entry) {
             let row = rowTemplate;
@@ -59,6 +77,11 @@
         // Evento: Clic en botón Agregar
         $('#wp-entry-index-add-button').on('click', function() {
             openModal(wp_entry_index_vars.messages.add_title || 'Agregar Entrada');
+        });
+        
+        // Evento: Clic en botón Importar CSV
+        $('#wp-entry-index-import-button').on('click', function() {
+            openImportModal();
         });
         
         // Evento: Clic en botón Editar
@@ -134,15 +157,31 @@
         });
         
         // Evento: Cerrar modal (X)
-        $('.wp-entry-index-modal-close').on('click', closeModal);
+        $('.wp-entry-index-modal-close').on('click', function() {
+            if ($(this).closest('.wp-entry-index-modal').is($importModal)) {
+                closeImportModal();
+            } else {
+                closeModal();
+            }
+        });
         
         // Evento: Cerrar modal (botón Cancelar)
-        $('.wp-entry-index-modal-cancel').on('click', closeModal);
+        $('.wp-entry-index-modal-cancel').on('click', function() {
+            if ($(this).closest('.wp-entry-index-modal').is($importModal)) {
+                closeImportModal();
+            } else {
+                closeModal();
+            }
+        });
         
         // Evento: Cerrar modal (clic fuera del contenido)
-        $modal.on('click', function(e) {
+        $('.wp-entry-index-modal').on('click', function(e) {
             if (e.target === this) {
-                closeModal();
+                if ($(this).is($importModal)) {
+                    closeImportModal();
+                } else {
+                    closeModal();
+                }
             }
         });
         
@@ -195,6 +234,86 @@
                             $tableBody.prepend(renderRow(response.data.entry));
                         }
                     } else {
+                        showNotice(response.data.message, 'error');
+                    }
+                },
+                error: function() {
+                    showNotice(wp_entry_index_vars.messages.error, 'error');
+                }
+            });
+        });
+        
+        // Evento: Enviar formulario de importación CSV
+        $importForm.on('submit', function(e) {
+            e.preventDefault();
+            
+            // Crear FormData para enviar el archivo
+            const formData = new FormData(this);
+            formData.append('action', 'wp_entry_index_import_csv');
+            formData.append('nonce', wp_entry_index_vars.nonce);
+            
+            // Mostrar mensaje de carga
+            showNotice('Importando datos, por favor espere...', 'success');
+            
+            // Enviar datos
+            $.ajax({
+                url: wp_entry_index_vars.ajax_url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        // Mostrar resultados
+                        $importResults.show();
+                        
+                        // Crear resumen
+                        let summary = '<p>' + response.data.message + '</p>';
+                        
+                        // Si hay errores, mostrarlos
+                        if (response.data.stats.error > 0 && response.data.stats.errors) {
+                            summary += '<p>Errores:</p><ul>';
+                            response.data.stats.errors.forEach(function(error) {
+                                summary += '<li>' + error + '</li>';
+                            });
+                            summary += '</ul>';
+                        }
+                        
+                        $importSummary.html(summary);
+                        
+                        // Mostrar mensaje
+                        showNotice(response.data.message, 'success');
+                        
+                        // Recargar la página después de 2 segundos para mostrar los nuevos datos
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        // Mostrar resultados con error
+                        $importResults.show();
+                        
+                        let summary = '<p class="error">' + response.data.message + '</p>';
+                        
+                        // Si hay estadísticas, mostrarlas
+                        if (response.data.stats) {
+                            summary += '<p>Estadísticas:</p>';
+                            summary += '<p>Total: ' + response.data.stats.total + ', ';
+                            summary += 'Éxito: ' + response.data.stats.success + ', ';
+                            summary += 'Error: ' + response.data.stats.error + '</p>';
+                            
+                            // Si hay errores, mostrarlos
+                            if (response.data.stats.error > 0 && response.data.stats.errors) {
+                                summary += '<p>Errores:</p><ul>';
+                                response.data.stats.errors.forEach(function(error) {
+                                    summary += '<li>' + error + '</li>';
+                                });
+                                summary += '</ul>';
+                            }
+                        }
+                        
+                        $importSummary.html(summary);
+                        
+                        // Mostrar mensaje de error
                         showNotice(response.data.message, 'error');
                     }
                 },

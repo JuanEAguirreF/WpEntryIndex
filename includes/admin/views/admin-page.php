@@ -19,6 +19,9 @@ if (!defined('ABSPATH')) {
         <button id="wp-entry-index-add-button" class="button button-primary">
             <?php _e('Agregar Nuevo', 'wp-entry-index'); ?>
         </button>
+        <button id="wp-entry-index-import-button" class="button button-primary">
+            <?php _e('Importar CSV', 'wp-entry-index'); ?>
+        </button>
     </div>
     
     <!-- Tabla de entradas -->
@@ -121,6 +124,33 @@ if (!defined('ABSPATH')) {
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+    
+    <!-- Modal para importar CSV -->
+    <div id="wp-entry-index-import-modal" class="wp-entry-index-modal" style="display: none;">
+        <div class="wp-entry-index-modal-content">
+            <span class="wp-entry-index-modal-close">&times;</span>
+            <h2><?php _e('Importar CSV', 'wp-entry-index'); ?></h2>
+            <form id="wp-entry-index-import-form" enctype="multipart/form-data">
+                <div class="wp-entry-index-form-group">
+                    <label for="wp-entry-index-csv-file"><?php _e('Archivo CSV', 'wp-entry-index'); ?></label>
+                    <input type="file" id="wp-entry-index-csv-file" name="csv_file" accept=".csv" required>
+                    <p class="description"><?php _e('El archivo debe tener dos columnas: Nombre y URL.', 'wp-entry-index'); ?></p>
+                </div>
+                <div class="wp-entry-index-form-actions">
+                    <button type="submit" class="button button-primary">
+                        <?php _e('Importar', 'wp-entry-index'); ?>
+                    </button>
+                    <button type="button" class="button wp-entry-index-modal-cancel">
+                        <?php _e('Cancelar', 'wp-entry-index'); ?>
+                    </button>
+                </div>
+            </form>
+            <div id="wp-entry-index-import-results" style="display: none;">
+                <h3><?php _e('Resultados de la importación', 'wp-entry-index'); ?></h3>
+                <div id="wp-entry-index-import-summary"></div>
+            </div>
         </div>
     </div>
 </div>
