@@ -252,6 +252,10 @@
             formData.append('action', 'wp_entry_index_import_csv');
             formData.append('nonce', wp_entry_index_vars.nonce);
             
+            // Añadir opción de omitir encabezados
+            const skipHeader = $('#wp-entry-index-skip-header').is(':checked');
+            formData.append('skip_header', skipHeader ? '1' : '0');
+            
             // Mostrar mensaje de carga
             showNotice('Importando datos, por favor espere...', 'success');
             

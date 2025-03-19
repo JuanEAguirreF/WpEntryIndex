@@ -1,9 +1,45 @@
 .wp-entry-index-actions {
     margin: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wp-entry-index-search form {
+    display: flex;
+    align-items: center;
+}
+
+.wp-entry-index-search input[type="search"] {
+    margin-right: 5px;
+    min-width: 300px;
+}
+
+.wp-entry-index-buttons {
+    display: flex;
+    gap: 10px;
 }
 
 .wp-entry-index-table {
     margin-top: 20px;
+}
+
+/* Estilos para la paginación */
+.tablenav-pages {
+    margin: 15px 0;
+}
+
+.tablenav-pages .pagination-links {
+    display: inline-flex;
+    align-items: center;
+}
+
+.tablenav-pages .pagination-links .button {
+    margin: 0 2px;
+}
+
+.tablenav-pages .paging-input {
+    margin: 0 5px;
 }
 
 /* Estilos para el modal */

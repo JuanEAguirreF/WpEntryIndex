@@ -98,14 +98,65 @@ class WP_Entry_Index_Admin {
             return;
         }
         
-        // Obtener entradas
-        $entries = $this->get_entries(50);
+        // Obtener parámetros de paginación y búsqueda
+        $current_page = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
+        $search_query = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
+        $per_page = 20; // Número de elementos por página
+        
+        // Obtener entradas con paginación y búsqueda
+        $entries_data = $this->get_entries_paginated($per_page, $current_page, $search_query);
+        $entries = $entries_data['entries'];
+        $total_entries = $entries_data['total'];
+        $total_pages = ceil($total_entries / $per_page);
         
         // Incluir template
         include WP_ENTRY_INDEX_PLUGIN_DIR . 'includes/admin/views/admin-page.php';
     }
     
-    // Obtener entradas
+    // Obtener entradas con paginación y búsqueda
+    private function get_entries_paginated($per_page = 20, $page = 1, $search = '') {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'entry_index';
+        
+        // Calcular offset
+        $offset = ($page - 1) * $per_page;
+        
+        // Preparar consulta base
+        $query = "SELECT * FROM $table_name";
+        $count_query = "SELECT COUNT(*) FROM $table_name";
+        $query_args = array();
+        
+        // Añadir condición de búsqueda si existe
+        if (!empty($search)) {
+            $query .= " WHERE name LIKE %s OR url LIKE %s";
+            $count_query .= " WHERE name LIKE %s OR url LIKE %s";
+            $search_term = '%' . $wpdb->esc_like($search) . '%';
+            $query_args[] = $search_term;
+            $query_args[] = $search_term;
+        }
+        
+        // Añadir ordenamiento y límite
+        $query .= " ORDER BY id DESC LIMIT %d OFFSET %d";
+        $query_args[] = $per_page;
+        $query_args[] = $offset;
+        
+        // Ejecutar consulta para obtener entradas
+        $entries = $wpdb->get_results(
+            $wpdb->prepare($query, $query_args),
+            ARRAY_A
+        );
+        
+        // Ejecutar consulta para obtener total
+        $count_args = !empty($search) ? array($search_term, $search_term) : array();
+        $total = $wpdb->get_var($wpdb->prepare($count_query, $count_args));
+        
+        return array(
+            'entries' => $entries,
+            'total' => $total
+        );
+    }
+    
+    // Obtener entradas (método original para compatibilidad)
     private function get_entries($limit = 50) {
         global $wpdb;
         $table_name = $wpdb->prefix . 'entry_index';
@@ -374,14 +425,25 @@ class WP_Entry_Index_Admin {
         $placeholders = array();
         $types = array();
         
+        // Verificar si se debe omitir la primera fila (encabezados)
+        $skip_header = isset($_POST['skip_header']) && $_POST['skip_header'] === '1';
+        $row_count = 0;
+        
         // Leer el archivo línea por línea
         while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+            $row_count++;
+            
+            // Omitir la primera fila si está marcada la opción
+            if ($skip_header && $row_count === 1) {
+                continue;
+            }
+            
             $stats['total']++;
             
             // Verificar que haya al menos dos columnas
             if (count($data) < 2) {
                 $stats['error']++;
-                $stats['errors'][] = sprintf(__('Línea %d: Formato incorrecto.', 'wp-entry-index'), $stats['total']);
+                $stats['errors'][] = sprintf(__('Línea %d: Formato incorrecto.', 'wp-entry-index'), $row_count);
                 continue;
             }
             
@@ -392,7 +454,7 @@ class WP_Entry_Index_Admin {
             // Validar datos
             if (empty($name) || empty($url)) {
                 $stats['error']++;
-                $stats['errors'][] = sprintf(__('Línea %d: Nombre o URL vacíos.', 'wp-entry-index'), $stats['total']);
+                $stats['errors'][] = sprintf(__('Línea %d: Nombre o URL vacíos.', 'wp-entry-index'), $row_count);
                 continue;
             }
             

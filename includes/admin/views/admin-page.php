@@ -14,14 +14,26 @@ if (!defined('ABSPATH')) {
     <!-- Mensajes de notificación -->
     <div id="wp-entry-index-notice" class="notice" style="display: none;"></div>
     
-    <!-- Botón para agregar nueva entrada -->
+    <!-- Formulario de búsqueda y acciones -->
     <div class="wp-entry-index-actions">
-        <button id="wp-entry-index-add-button" class="button button-primary">
-            <?php _e('Agregar Nuevo', 'wp-entry-index'); ?>
-        </button>
-        <button id="wp-entry-index-import-button" class="button button-primary">
-            <?php _e('Importar CSV', 'wp-entry-index'); ?>
-        </button>
+        <div class="wp-entry-index-search">
+            <form method="get">
+                <input type="hidden" name="page" value="wp-entry-index">
+                <input type="search" name="s" value="<?php echo esc_attr($search_query); ?>" placeholder="<?php _e('Buscar entradas...', 'wp-entry-index'); ?>">
+                <input type="submit" class="button" value="<?php _e('Buscar', 'wp-entry-index'); ?>">
+                <?php if (!empty($search_query)) : ?>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=wp-entry-index')); ?>" class="button"><?php _e('Limpiar', 'wp-entry-index'); ?></a>
+                <?php endif; ?>
+            </form>
+        </div>
+        <div class="wp-entry-index-buttons">
+            <button id="wp-entry-index-add-button" class="button button-primary">
+                <?php _e('Agregar Nuevo', 'wp-entry-index'); ?>
+            </button>
+            <button id="wp-entry-index-import-button" class="button button-primary">
+                <?php _e('Importar CSV', 'wp-entry-index'); ?>
+            </button>
+        </div>
     </div>
     
     <!-- Tabla de entradas -->
@@ -78,6 +90,63 @@ if (!defined('ABSPATH')) {
             <?php endif; ?>
         </tbody>
     </table>
+    
+    <!-- Paginación -->
+    <?php if ($total_pages > 1) : ?>
+    <div class="tablenav bottom">
+        <div class="tablenav-pages">
+            <span class="displaying-num">
+                <?php printf(_n('%s elemento', '%s elementos', $total_entries, 'wp-entry-index'), number_format_i18n($total_entries)); ?>
+            </span>
+            <span class="pagination-links">
+                <?php
+                // Construir URL base para paginación
+                $base_url = add_query_arg('page', 'wp-entry-index', admin_url('admin.php'));
+                if (!empty($search_query)) {
+                    $base_url = add_query_arg('s', urlencode($search_query), $base_url);
+                }
+                
+                // Primera página
+                if ($current_page > 1) :
+                    $first_url = esc_url(add_query_arg('paged', 1, $base_url));
+                    echo '<a class="first-page button" href="' . $first_url . '"><span class="screen-reader-text">' . __('Primera página', 'wp-entry-index') . '</span><span aria-hidden="true">&laquo;</span></a>';
+                else :
+                    echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>';
+                endif;
+                
+                // Página anterior
+                if ($current_page > 1) :
+                    $prev_url = esc_url(add_query_arg('paged', $current_page - 1, $base_url));
+                    echo '<a class="prev-page button" href="' . $prev_url . '"><span class="screen-reader-text">' . __('Página anterior', 'wp-entry-index') . '</span><span aria-hidden="true">&lsaquo;</span></a>';
+                else :
+                    echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&lsaquo;</span>';
+                endif;
+                
+                // Número de página actual
+                echo '<span class="paging-input">';
+                echo '<span class="tablenav-paging-text">' . $current_page . ' ' . __('de', 'wp-entry-index') . ' <span class="total-pages">' . $total_pages . '</span></span>';
+                echo '</span>';
+                
+                // Página siguiente
+                if ($current_page < $total_pages) :
+                    $next_url = esc_url(add_query_arg('paged', $current_page + 1, $base_url));
+                    echo '<a class="next-page button" href="' . $next_url . '"><span class="screen-reader-text">' . __('Página siguiente', 'wp-entry-index') . '</span><span aria-hidden="true">&rsaquo;</span></a>';
+                else :
+                    echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&rsaquo;</span>';
+                endif;
+                
+                // Última página
+                if ($current_page < $total_pages) :
+                    $last_url = esc_url(add_query_arg('paged', $total_pages, $base_url));
+                    echo '<a class="last-page button" href="' . $last_url . '"><span class="screen-reader-text">' . __('Última página', 'wp-entry-index') . '</span><span aria-hidden="true">&raquo;</span></a>';
+                else :
+                    echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&raquo;</span>';
+                endif;
+                ?>
+            </span>
+        </div>
+    </div>
+    <?php endif; ?>
     
     <!-- Template para nueva fila -->
     <script type="text/template" id="wp-entry-index-row-template">
@@ -137,6 +206,12 @@ if (!defined('ABSPATH')) {
                     <label for="wp-entry-index-csv-file"><?php _e('Archivo CSV', 'wp-entry-index'); ?></label>
                     <input type="file" id="wp-entry-index-csv-file" name="csv_file" accept=".csv" required>
                     <p class="description"><?php _e('El archivo debe tener dos columnas: Nombre y URL.', 'wp-entry-index'); ?></p>
+                </div>
+                <div class="wp-entry-index-form-group">
+                    <label for="wp-entry-index-skip-header">
+                        <input type="checkbox" id="wp-entry-index-skip-header" name="skip_header" checked>
+                        <?php _e('Omitir primera fila (encabezados)', 'wp-entry-index'); ?>
+                    </label>
                 </div>
                 <div class="wp-entry-index-form-actions">
                     <button type="submit" class="button button-primary">
