@@ -1,0 +1,33 @@
+.wp-entry-index-container {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #e5e5e5;
+}
+
+.wp-entry-index-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.wp-entry-index-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.wp-entry-index-item:last-child {
+    border-bottom: none;
+}
+
+.wp-entry-index-item a {
+    text-decoration: none;
+    color: #0073aa;
+    transition: color 0.3s ease;
+}
+
+.wp-entry-index-item a:hover {
+    color: #00a0d2;
+    text-decoration: underline;
+}
