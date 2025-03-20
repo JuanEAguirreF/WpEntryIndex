@@ -92,9 +92,13 @@
 }
 
 .wp-entry-index-form-group input {
-    
+    width: 100%;
     padding: 8px;
     box-sizing: border-box;
+}
+
+.wp-entry-index-form-group input[type="checkbox"] {
+    width: 18px;
 }
 
 .wp-entry-index-form-actions {

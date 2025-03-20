@@ -3,7 +3,7 @@
  * Plugin Name: WP Entry Index
  * Plugin URI: 
  * Description: Plugin para crear un índice de publicaciones manualmente desde el panel de administración.
- * Version: 1.2.2
+ * Version: 1.3.0
  * Author: Waylayer
  * Author URI: https://profiles.wordpress.org/waylayer/
  * Text Domain: wp-entry-index
@@ -100,6 +100,57 @@ class WP_Entry_Index {
         
         // Registrar shortcode
         WP_Entry_Index_Shortcode::init();
+        
+        // Hook para agregar entradas automáticamente cuando se publica un post
+        add_action('publish_post', array($this, 'add_post_to_index'));
+    }
+    
+    // Función para agregar automáticamente una entrada al índice cuando se publica un post
+    public function add_post_to_index($post_id) {
+        // Verificar si es una revisión o un autoguardado
+        if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+            return;
+        }
+        
+        // Obtener información del post
+        $post = get_post($post_id);
+        
+        // Verificar que sea un post público
+        if ($post->post_status !== 'publish' || $post->post_type !== 'post') {
+            return;
+        }
+        
+        // Obtener título y URL del post
+        $name = $post->post_title;
+        $url = get_permalink($post_id);
+        
+        // Verificar si ya existe una entrada con esta URL para evitar duplicados
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'entry_index';
+        
+        $existing = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT id FROM $table_name WHERE url = %s",
+                $url
+            )
+        );
+        
+        // Si ya existe, no hacer nada
+        if ($existing) {
+            return;
+        }
+        
+        // Insertar en la base de datos
+        $wpdb->insert(
+            $table_name,
+            array(
+                'name' => $name,
+                'url' => $url,
+                'created_by' => $post->post_author,
+                'created_at' => current_time('mysql')
+            ),
+            array('%s', '%s', '%d', '%s')
+        );
     }
 }
 
