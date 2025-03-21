@@ -34,21 +34,42 @@ class WP_Entry_Index_Admin {
     
     // Agregar menú en el panel de administración
     public function add_admin_menu() {
+        // Menú principal
         add_menu_page(
             __('Índice de Entradas', 'wp-entry-index'),
             __('Índice de Entradas', 'wp-entry-index'),
             'manage_options',
             'wp-entry-index',
-            array($this, 'render_admin_page'),
+            array($this, 'render_index_page'),
             'dashicons-list-view',
             30
+        );
+        
+        // Submenú Índice (mismo que el principal)
+        add_submenu_page(
+            'wp-entry-index',
+            __('Índice', 'wp-entry-index'),
+            __('Índice', 'wp-entry-index'),
+            'manage_options',
+            'wp-entry-index',
+            array($this, 'render_index_page')
+        );
+        
+        // Submenú Configuración
+        add_submenu_page(
+            'wp-entry-index',
+            __('Configuración', 'wp-entry-index'),
+            __('Configuración', 'wp-entry-index'),
+            'manage_options',
+            'wp-entry-index-settings',
+            array($this, 'render_settings_page')
         );
     }
     
     // Registrar scripts y estilos
     public function enqueue_scripts($hook) {
-        // Solo cargar en la página del plugin
-        if ('toplevel_page_wp-entry-index' !== $hook) {
+        // Cargar en las páginas del plugin
+        if ('toplevel_page_wp-entry-index' !== $hook && 'indice-de-entradas_page_wp-entry-index-settings' !== $hook) {
             return;
         }
         
@@ -60,39 +81,42 @@ class WP_Entry_Index_Admin {
             WP_ENTRY_INDEX_VERSION
         );
         
-        // Registrar scripts
-        wp_enqueue_script(
-            'wp-entry-index-admin',
-            WP_ENTRY_INDEX_PLUGIN_URL . 'assets/js/admin.js',
-            array('jquery'),
-            WP_ENTRY_INDEX_VERSION,
-            true
-        );
-        
-        // Pasar variables al script
-        wp_localize_script(
-            'wp-entry-index-admin',
-            'wp_entry_index_vars',
-            array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('wp_entry_index_nonce'),
-                'messages' => array(
-                    'confirm_delete' => __('¿Estás seguro de que deseas eliminar este elemento?', 'wp-entry-index'),
-                    'error' => __('Ha ocurrido un error. Por favor, inténtalo de nuevo.', 'wp-entry-index'),
-                    'success_add' => __('Elemento agregado correctamente.', 'wp-entry-index'),
-                    'success_edit' => __('Elemento actualizado correctamente.', 'wp-entry-index'),
-                    'success_delete' => __('Elemento eliminado correctamente.', 'wp-entry-index'),
-                    'success_import' => __('Importación completada correctamente.', 'wp-entry-index'),
-                    'error_import' => __('Error en la importación. Por favor, verifica el formato del archivo.', 'wp-entry-index'),
-                    'add_title' => __('Agregar Entrada', 'wp-entry-index'),
-                    'edit_title' => __('Editar Entrada', 'wp-entry-index')
+        // Solo cargar scripts en la página principal (índice)
+        if ('toplevel_page_wp-entry-index' === $hook) {
+            // Registrar scripts
+            wp_enqueue_script(
+                'wp-entry-index-admin',
+                WP_ENTRY_INDEX_PLUGIN_URL . 'assets/js/admin.js',
+                array('jquery'),
+                WP_ENTRY_INDEX_VERSION,
+                true
+            );
+            
+            // Pasar variables al script
+            wp_localize_script(
+                'wp-entry-index-admin',
+                'wp_entry_index_vars',
+                array(
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('wp_entry_index_nonce'),
+                    'messages' => array(
+                        'confirm_delete' => __('¿Estás seguro de que deseas eliminar este elemento?', 'wp-entry-index'),
+                        'error' => __('Ha ocurrido un error. Por favor, inténtalo de nuevo.', 'wp-entry-index'),
+                        'success_add' => __('Elemento agregado correctamente.', 'wp-entry-index'),
+                        'success_edit' => __('Elemento actualizado correctamente.', 'wp-entry-index'),
+                        'success_delete' => __('Elemento eliminado correctamente.', 'wp-entry-index'),
+                        'success_import' => __('Importación completada correctamente.', 'wp-entry-index'),
+                        'error_import' => __('Error en la importación. Por favor, verifica el formato del archivo.', 'wp-entry-index'),
+                        'add_title' => __('Agregar Entrada', 'wp-entry-index'),
+                        'edit_title' => __('Editar Entrada', 'wp-entry-index')
+                    )
                 )
-            )
-        );
+            );
+        }
     }
     
-    // Renderizar página de administración
-    public function render_admin_page() {
+    // Renderizar página de índice (antes render_admin_page)
+    public function render_index_page() {
         // Verificar permisos
         if (!current_user_can('manage_options')) {
             return;
@@ -111,6 +135,17 @@ class WP_Entry_Index_Admin {
         
         // Incluir template
         include WP_ENTRY_INDEX_PLUGIN_DIR . 'includes/admin/views/admin-page.php';
+    }
+    
+    // Renderizar página de configuración
+    public function render_settings_page() {
+        // Verificar permisos
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        
+        // Incluir template
+        include WP_ENTRY_INDEX_PLUGIN_DIR . 'includes/admin/views/settings-page.php';
     }
     
     // Obtener entradas con paginación y búsqueda
