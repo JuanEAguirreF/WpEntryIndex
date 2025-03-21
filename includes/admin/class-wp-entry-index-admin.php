@@ -30,6 +30,8 @@ class WP_Entry_Index_Admin {
         add_action('wp_ajax_wp_entry_index_delete', array($this, 'ajax_delete_entry'));
         add_action('wp_ajax_wp_entry_index_get', array($this, 'ajax_get_entry'));
         add_action('wp_ajax_wp_entry_index_import_csv', array($this, 'ajax_import_csv'));
+        add_action('wp_ajax_wp_entry_index_search_categories', array($this, 'ajax_search_categories'));
+        add_action('wp_ajax_wp_entry_index_save_settings', array($this, 'ajax_save_settings'));
     }
     
     // Agregar menú en el panel de administración
@@ -109,6 +111,34 @@ class WP_Entry_Index_Admin {
                         'error_import' => __('Error en la importación. Por favor, verifica el formato del archivo.', 'wp-entry-index'),
                         'add_title' => __('Agregar Entrada', 'wp-entry-index'),
                         'edit_title' => __('Editar Entrada', 'wp-entry-index')
+                    )
+                )
+            );
+        }
+        
+        // Cargar scripts en la página de configuración
+        if ('indice-de-entradas_page_wp-entry-index-settings' === $hook) {
+            // Registrar scripts
+            wp_enqueue_script(
+                'wp-entry-index-settings',
+                WP_ENTRY_INDEX_PLUGIN_URL . 'assets/js/settings.js',
+                array('jquery'),
+                WP_ENTRY_INDEX_VERSION,
+                true
+            );
+            
+            // Pasar variables al script
+            wp_localize_script(
+                'wp-entry-index-settings',
+                'wp_entry_index_settings_vars',
+                array(
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('wp_entry_index_settings_nonce'),
+                    'messages' => array(
+                        'error' => __('Ha ocurrido un error. Por favor, inténtalo de nuevo.', 'wp-entry-index'),
+                        'success_save' => __('Configuración guardada correctamente.', 'wp-entry-index'),
+                        'no_results' => __('No se encontraron categorías.', 'wp-entry-index'),
+                        'searching' => __('Buscando...', 'wp-entry-index')
                     )
                 )
             );
@@ -532,6 +562,108 @@ class WP_Entry_Index_Admin {
                 $stats['error']
             ),
             'stats' => $stats
+        ));
+    }
+    
+    // Buscar categorías (AJAX)
+    public function ajax_search_categories() {
+        // Verificar nonce
+        check_ajax_referer('wp_entry_index_settings_nonce', 'nonce');
+        
+        // Verificar permisos
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'wp-entry-index')));
+        }
+        
+        // Obtener término de búsqueda
+        $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+        
+        // Buscar categorías
+        $args = array(
+            'taxonomy' => 'category',
+            'hide_empty' => false,
+            'search' => $search,
+            'number' => 10
+        );
+        
+        $categories = get_terms($args);
+        
+        // Preparar resultados
+        $results = array();
+        if (!is_wp_error($categories) && !empty($categories)) {
+            foreach ($categories as $category) {
+                $results[] = array(
+                    'id' => $category->term_id,
+                    'text' => $category->name
+                );
+            }
+        }
+        
+        wp_send_json_success(array('results' => $results));
+    }
+    
+    // Guardar configuración (AJAX)
+    public function ajax_save_settings() {
+        // Verificar nonce
+        check_ajax_referer('wp_entry_index_settings_nonce', 'nonce');
+        
+        // Verificar permisos
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'wp-entry-index')));
+        }
+        
+        // Obtener datos
+        $settings = isset($_POST['settings']) ? $_POST['settings'] : array();
+        
+        // Sanitizar datos
+        $sanitized_settings = array();
+        
+        // Procesar configuración general
+        if (isset($settings['general'])) {
+            $sanitized_settings['general'] = array();
+            
+            // Título del índice
+            if (isset($settings['general']['index_title'])) {
+                $sanitized_settings['general']['index_title'] = sanitize_text_field($settings['general']['index_title']);
+            }
+            
+            // Descripción del índice
+            if (isset($settings['general']['index_description'])) {
+                $sanitized_settings['general']['index_description'] = wp_kses_post($settings['general']['index_description']);
+            }
+            
+            // Elementos por página
+            if (isset($settings['general']['items_per_page'])) {
+                $sanitized_settings['general']['items_per_page'] = absint($settings['general']['items_per_page']);
+            }
+        }
+        
+        // Procesar configuración de visualización
+        if (isset($settings['display'])) {
+            $sanitized_settings['display'] = array();
+            
+            // Mostrar buscador
+            if (isset($settings['display']['show_search'])) {
+                $sanitized_settings['display']['show_search'] = (bool) $settings['display']['show_search'];
+            }
+            
+            // Mostrar paginación
+            if (isset($settings['display']['show_pagination'])) {
+                $sanitized_settings['display']['show_pagination'] = (bool) $settings['display']['show_pagination'];
+            }
+            
+            // Estilo de visualización
+            if (isset($settings['display']['display_style'])) {
+                $sanitized_settings['display']['display_style'] = sanitize_text_field($settings['display']['display_style']);
+            }
+        }
+        
+        // Guardar configuración
+        update_option('wp_entry_index_settings', $sanitized_settings);
+        
+        wp_send_json_success(array(
+            'message' => __('Configuración guardada correctamente.', 'wp-entry-index'),
+            'settings' => $sanitized_settings
         ));
     }
 }

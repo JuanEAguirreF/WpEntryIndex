@@ -3,7 +3,7 @@
  * Plugin Name: WP Entry Index
  * Plugin URI: 
  * Description: Plugin para crear un índice de publicaciones manualmente desde el panel de administración.
- * Version: 1.3.1
+ * Version: 1.4.1
  * Author: Waylayer
  * Author URI: https://profiles.wordpress.org/waylayer/
  * Text Domain: wp-entry-index
@@ -65,6 +65,9 @@ class WP_Entry_Index {
         
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
+        
+        // Inicializar opción para categorías seleccionadas
+        add_option('wp_entry_index_categories', array());
     }
     
     // Desactivación del plugin
@@ -118,6 +121,28 @@ class WP_Entry_Index {
         // Verificar que sea un post público
         if ($post->post_status !== 'publish' || $post->post_type !== 'post') {
             return;
+        }
+        
+        // Obtener las categorías seleccionadas en la configuración
+        $selected_categories = get_option('wp_entry_index_categories', array());
+        
+        // Si hay categorías seleccionadas, verificar si el post pertenece a alguna de ellas
+        if (!empty($selected_categories)) {
+            $post_categories = wp_get_post_categories($post_id, array('fields' => 'ids'));
+            
+            // Verificar si hay intersección entre las categorías del post y las seleccionadas
+            $category_match = false;
+            foreach ($post_categories as $cat_id) {
+                if (isset($selected_categories[$cat_id])) {
+                    $category_match = true;
+                    break;
+                }
+            }
+            
+            // Si no hay coincidencia, no agregar al índice
+            if (!$category_match) {
+                return;
+            }
         }
         
         // Obtener título y URL del post

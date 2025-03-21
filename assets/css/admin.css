@@ -109,3 +109,76 @@
 .wp-entry-index-form-actions button {
     margin-left: 10px;
 }
+
+/* Estilos para el selector de categorías */
+.wp-entry-index-category-search-container {
+    position: relative;
+}
+
+.wp-entry-index-category-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    z-index: 10;
+    display: none;
+}
+
+.wp-entry-index-category-results.active {
+    display: block;
+}
+
+.wp-entry-index-category-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.wp-entry-index-category-item:hover {
+    background-color: #f9f9f9;
+}
+
+.wp-entry-index-category-item:last-child {
+    border-bottom: none;
+}
+
+.wp-entry-index-selected-categories {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.wp-entry-index-category-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 3px;
+    padding: 5px 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.wp-entry-index-category-tag span {
+    margin-right: 5px;
+}
+
+.wp-entry-index-remove-category {
+    color: #999;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.wp-entry-index-remove-category:hover {
+    color: #d54e21;
+}
+
+.wp-entry-index-no-categories {
+    color: #999;
+    font-style: italic;
+}
