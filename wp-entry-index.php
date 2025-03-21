@@ -3,7 +3,7 @@
  * Plugin Name: WP Entry Index
  * Plugin URI: 
  * Description: Plugin para crear un índice de publicaciones manualmente desde el panel de administración.
- * Version: 1.4.8
+ * Version: 1.4.13
  * Author: Waylayer
  * Author URI: https://profiles.wordpress.org/waylayer/
  * Text Domain: wp-entry-index
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('WP_ENTRY_INDEX_VERSION', '1.4.8');
+define('WP_ENTRY_INDEX_VERSION', '1.4.13');
 define('WP_ENTRY_INDEX_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_ENTRY_INDEX_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -105,13 +105,14 @@ class WP_Entry_Index {
         WP_Entry_Index_Shortcode::init();
         
         // Hook para agregar entradas automáticamente cuando se publica un post
-        add_action('publish_post', array($this, 'add_post_to_index'));
+        add_action('save_post', array($this, 'add_post_to_index'));
     }
     
     // Función para agregar automáticamente una entrada al índice cuando se publica un post
     public function add_post_to_index($post_id) {
         // Verificar si es una revisión o un autoguardado
         if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+            error_log('WP Entry Index: Post ' . $post_id . ' es una revisión o autoguardado, no se procesa.');
             return;
         }
         
@@ -120,27 +121,43 @@ class WP_Entry_Index {
         
         // Verificar que sea un post público
         if ($post->post_status !== 'publish' || $post->post_type !== 'post') {
+            error_log('WP Entry Index: Post ' . $post_id . ' no es un post publicado o no es del tipo post. Estado: ' . $post->post_status . ', Tipo: ' . $post->post_type);
             return;
         }
         
+        error_log('WP Entry Index: Procesando post ' . $post_id . ' - ' . $post->post_title);
+        
         // Obtener las categorías seleccionadas en la configuración
         $selected_categories = get_option('wp_entry_index_categories', array());
+        error_log('WP Entry Index: Categorías seleccionadas en configuración (tipo: ' . gettype($selected_categories) . '): ' . print_r($selected_categories, true));
         
         // Si hay categorías seleccionadas, verificar si el post pertenece a alguna de ellas
         if (!empty($selected_categories)) {
             $post_categories = wp_get_post_categories($post_id, array('fields' => 'ids'));
+            error_log('WP Entry Index: Categorías del post: ' . print_r($post_categories, true));
             
             // Verificar si hay intersección entre las categorías del post y las seleccionadas
             $category_match = false;
+            error_log('WP Entry Index: Tipo de dato de post_categories: ' . gettype($post_categories));
+            error_log('WP Entry Index: Tipo de dato de selected_categories: ' . gettype($selected_categories));
+            
+            // Convertir las claves de selected_categories a string para asegurar compatibilidad
+            $selected_cat_ids = array_map('strval', array_keys($selected_categories));
+            error_log('WP Entry Index: IDs de categorías seleccionadas: ' . implode(', ', $selected_cat_ids));
+            
             foreach ($post_categories as $cat_id) {
-                if (isset($selected_categories[$cat_id])) {
+                $cat_id_str = strval($cat_id);
+                error_log('WP Entry Index: Verificando categoría ' . $cat_id . ' (tipo: ' . gettype($cat_id) . ') - Existe en seleccionadas: ' . (in_array($cat_id_str, $selected_cat_ids) ? 'Sí' : 'No'));
+                if (in_array($cat_id_str, $selected_cat_ids) || isset($selected_categories[$cat_id])) {
                     $category_match = true;
+                    error_log('WP Entry Index: Coincidencia encontrada en categoría ' . $cat_id);
                     break;
                 }
             }
             
             // Si no hay coincidencia, no agregar al índice
             if (!$category_match) {
+                error_log('WP Entry Index: No se encontraron coincidencias de categorías para el post ' . $post_id . ', no se agrega al índice.');
                 return;
             }
         }
