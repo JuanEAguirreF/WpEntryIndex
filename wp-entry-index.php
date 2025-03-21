@@ -3,7 +3,7 @@
  * Plugin Name: WP Entry Index
  * Plugin URI: 
  * Description: Plugin para crear un índice de publicaciones manualmente desde el panel de administración.
- * Version: 1.4.1
+ * Version: 1.4.8
  * Author: Waylayer
  * Author URI: https://profiles.wordpress.org/waylayer/
  * Text Domain: wp-entry-index
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('WP_ENTRY_INDEX_VERSION', '1.0.0');
+define('WP_ENTRY_INDEX_VERSION', '1.4.8');
 define('WP_ENTRY_INDEX_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_ENTRY_INDEX_PLUGIN_URL', plugin_dir_url(__FILE__));
 

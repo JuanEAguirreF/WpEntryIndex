@@ -32,16 +32,20 @@ jQuery(document).ready(function($) {
                 data: {
                     action: 'wp_entry_index_search_categories',
                     nonce: wp_entry_index_settings_vars.nonce,
-                    query: query
+                    search: query
                 },
                 success: function(response) {
-                    if (response.success) {
-                        displayCategoryResults(response.data);
+                    console.log('Respuesta recibida:', response); // Depuración
+                    
+                    if (response && response.success === true && response.data && Array.isArray(response.data.results)) {
+                        displayCategoryResults(response.data.results);
                     } else {
+                        console.error('Estructura de respuesta inválida:', response);
                         categoryResults.html('<p class="no-results">' + wp_entry_index_settings_vars.messages.no_results + '</p>');
                     }
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.error('Error AJAX:', status, error);
                     categoryResults.html('<p class="error">' + wp_entry_index_settings_vars.messages.error + '</p>');
                 }
             });
@@ -50,29 +54,41 @@ jQuery(document).ready(function($) {
     
     // Función para mostrar resultados de categorías
     function displayCategoryResults(categories) {
-        // Si no hay resultados
-        if (categories.length === 0) {
+        console.log('Categorías a mostrar:', categories); // Depuración
+        
+        // Si no hay resultados o categories no es un array
+        if (!categories || !Array.isArray(categories) || categories.length === 0) {
             categoryResults.html('<p class="no-results">' + wp_entry_index_settings_vars.messages.no_results + '</p>');
             return;
         }
         
         // Crear lista de resultados
         var resultsList = $('<ul class="wp-entry-index-category-list"></ul>');
+        var validItemsCount = 0;
         
         // Añadir cada categoría a la lista
         $.each(categories, function(index, category) {
+            // Verificar que category y sus propiedades existan
+            if (!category || typeof category.id === 'undefined' || typeof category.text === 'undefined') {
+                console.error('Datos de categoría inválidos:', category);
+                return; // Continuar con la siguiente iteración
+            }
+            
             // Comprobar si la categoría ya está seleccionada
             var isSelected = selectedCategories.find('[data-id="' + category.id + '"]').length > 0;
             
             // Si no está seleccionada, añadirla a los resultados
             if (!isSelected) {
-                var item = $('<li class="wp-entry-index-category-item" data-id="' + category.id + '" data-name="' + category.name + '">' + category.name + '</li>');
+                // Escapar el nombre de la categoría para evitar problemas con caracteres especiales
+                var escapedName = $('<div/>').text(category.text).html();
+                var item = $('<li class="wp-entry-index-category-item" data-id="' + category.id + '">' + category.text + '</li>');
                 resultsList.append(item);
+                validItemsCount++;
             }
         });
         
-        // Si todos los resultados ya están seleccionados
-        if (resultsList.children().length === 0) {
+        // Si todos los resultados ya están seleccionados o no hay resultados válidos
+        if (validItemsCount === 0) {
             categoryResults.html('<p class="no-results">' + wp_entry_index_settings_vars.messages.no_results + '</p>');
             return;
         }
@@ -169,7 +185,9 @@ jQuery(document).ready(function($) {
     // Evento: Seleccionar categoría de los resultados
     categoryResults.on('click', '.wp-entry-index-category-item', function() {
         var id = $(this).data('id');
-        var name = $(this).data('name');
+        // Obtener el nombre directamente del contenido del elemento en lugar de usar data-name
+        var name = $(this).text();
+        console.log('Categoría seleccionada:', id, name); // Depuración
         addSelectedCategory(id, name);
     });
     

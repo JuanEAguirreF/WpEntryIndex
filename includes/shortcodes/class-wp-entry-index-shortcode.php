@@ -32,7 +32,7 @@ class WP_Entry_Index_Shortcode {
             'wp-entry-index-public',
             WP_ENTRY_INDEX_PLUGIN_URL . 'assets/css/public.css',
             array(),
-            WP_ENTRY_INDEX_VERSION
+            filemtime(WP_ENTRY_INDEX_PLUGIN_DIR . 'assets/css/public.css')
         );
         
         // Registrar JavaScript
@@ -40,7 +40,7 @@ class WP_Entry_Index_Shortcode {
             'wp-entry-index-public',
             WP_ENTRY_INDEX_PLUGIN_URL . 'assets/js/public.js',
             array('jquery'),
-            WP_ENTRY_INDEX_VERSION,
+            filemtime(WP_ENTRY_INDEX_PLUGIN_DIR . 'assets/js/public.js'),
             true
         );
     }

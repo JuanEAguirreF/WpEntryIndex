@@ -80,7 +80,7 @@ class WP_Entry_Index_Admin {
             'wp-entry-index-admin',
             WP_ENTRY_INDEX_PLUGIN_URL . 'assets/css/admin.css',
             array(),
-            WP_ENTRY_INDEX_VERSION
+            filemtime(WP_ENTRY_INDEX_PLUGIN_DIR . 'assets/css/admin.css')
         );
         
         // Solo cargar scripts en la página principal (índice)
@@ -90,7 +90,7 @@ class WP_Entry_Index_Admin {
                 'wp-entry-index-admin',
                 WP_ENTRY_INDEX_PLUGIN_URL . 'assets/js/admin.js',
                 array('jquery'),
-                WP_ENTRY_INDEX_VERSION,
+                filemtime(WP_ENTRY_INDEX_PLUGIN_DIR . 'assets/js/admin.js'),
                 true
             );
             
@@ -123,7 +123,7 @@ class WP_Entry_Index_Admin {
                 'wp-entry-index-settings',
                 WP_ENTRY_INDEX_PLUGIN_URL . 'assets/js/settings.js',
                 array('jquery'),
-                WP_ENTRY_INDEX_VERSION,
+                filemtime(WP_ENTRY_INDEX_PLUGIN_DIR . 'assets/js/settings.js'),
                 true
             );
             
@@ -582,23 +582,29 @@ class WP_Entry_Index_Admin {
         $args = array(
             'taxonomy' => 'category',
             'hide_empty' => false,
-            'search' => $search,
+            'name__like' => $search,  // Usar name__like en lugar de search para filtrar por nombre
             'number' => 10
         );
         
         $categories = get_terms($args);
-        
-        // Preparar resultados
         $results = array();
+        
+        // Verificar si hay categorías y no es un error
         if (!is_wp_error($categories) && !empty($categories)) {
             foreach ($categories as $category) {
-                $results[] = array(
-                    'id' => $category->term_id,
-                    'text' => $category->name
-                );
+                if (isset($category->term_id) && isset($category->name)) {
+                    // Solo incluir categorías que contengan el término de búsqueda
+                    if (empty($search) || stripos($category->name, $search) !== false) {
+                        $results[] = array(
+                            'id' => $category->term_id,
+                            'text' => $category->name
+                        );
+                    }
+                }
             }
         }
         
+        // Asegurar que siempre devolvemos un array, incluso si está vacío
         wp_send_json_success(array('results' => $results));
     }
     
@@ -612,7 +618,21 @@ class WP_Entry_Index_Admin {
             wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'wp-entry-index')));
         }
         
-        // Obtener datos
+        // Obtener categorías seleccionadas
+        $categories = isset($_POST['wp_entry_index_categories']) ? $_POST['wp_entry_index_categories'] : array();
+        
+        // Sanitizar categorías
+        $sanitized_categories = array();
+        if (!empty($categories)) {
+            foreach ($categories as $cat_id => $cat_name) {
+                $sanitized_categories[absint($cat_id)] = sanitize_text_field($cat_name);
+            }
+        }
+        
+        // Guardar categorías
+        update_option('wp_entry_index_categories', $sanitized_categories);
+        
+        // Obtener datos de configuración general
         $settings = isset($_POST['settings']) ? $_POST['settings'] : array();
         
         // Sanitizar datos
@@ -663,7 +683,8 @@ class WP_Entry_Index_Admin {
         
         wp_send_json_success(array(
             'message' => __('Configuración guardada correctamente.', 'wp-entry-index'),
-            'settings' => $sanitized_settings
+            'settings' => $sanitized_settings,
+            'categories' => $sanitized_categories
         ));
     }
 }
