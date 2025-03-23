@@ -3,11 +3,13 @@
  * Plugin Name: WP Entry Index
  * Plugin URI: 
  * Description: Plugin para crear un índice de publicaciones manualmente desde el panel de administración.
- * Version: 1.4.23
+ * Version: 1.5.3
  * Author: Waylayer
  * Author URI: https://profiles.wordpress.org/waylayer/
- * Text Domain: wp-entry-index
+ * Text Domain: WpEntryIndex
  * Domain Path: /languages
+ * License: GPL-2.0+
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
 // Evitar acceso directo al archivo
@@ -16,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('WP_ENTRY_INDEX_VERSION', '1.4.23');
+define('WP_ENTRY_INDEX_VERSION', '1.5.3');
 define('WP_ENTRY_INDEX_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_ENTRY_INDEX_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -78,7 +80,7 @@ class WP_Entry_Index {
     // Inicializar el plugin
     public function init() {
         // Cargar traducciones
-        load_plugin_textdomain('wp-entry-index', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        load_plugin_textdomain('WpEntryIndex', false, dirname(plugin_basename(__FILE__)) . '/languages');
         
         // Incluir archivos necesarios
         $this->includes();
@@ -236,12 +238,24 @@ class WP_Entry_Index {
         global $wpdb;
         $table_name = $wpdb->prefix . 'entry_index';
         
-        $existing = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT id FROM {$table_name} WHERE url = %s",
-                $url
-            )
-        );
+        // Crear clave de caché basada en la URL
+        $cache_key = 'wp_entry_index_existing_url_' . md5($url);
+        
+        // Intentar obtener desde caché
+        $existing = wp_cache_get($cache_key, 'wp_entry_index');
+        
+        // Si no está en caché, ejecutar consulta
+        if (false === $existing) {
+            $existing = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT id FROM {$wpdb->prefix}entry_index WHERE url = %s",
+                    $url
+                )
+            );
+            
+            // Guardar en caché
+            wp_cache_set($cache_key, $existing, 'wp_entry_index', 3600); // Caché por 1 hora
+        }
         
         // Si ya existe, no hacer nada
         if ($existing) {
@@ -251,7 +265,7 @@ class WP_Entry_Index {
         
         // Insertar en la base de datos
         $result = $wpdb->insert(
-            $table_name,
+            $wpdb->prefix . 'entry_index',
             array(
                 'name' => $name,
                 'url' => $url,

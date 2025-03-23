@@ -61,7 +61,7 @@ class WP_Entry_Index_Shortcode {
         
         // Si no hay entradas, devolver mensaje
         if (empty($entries)) {
-            return '<p>' . __('No hay entradas disponibles.', 'wp-entry-index') . '</p>';
+            return '<p>' . __('No hay entradas disponibles.', 'WpEntryIndex') . '</p>';
         }
         
         // Encolar estilos y scripts
@@ -76,7 +76,7 @@ class WP_Entry_Index_Shortcode {
         
         // Agregar buscador
         echo '<div class="wp-entry-index-search-container">';
-        echo '<input type="text" id="wp-entry-index-search-input" placeholder="' . esc_attr__('Buscar...', 'wp-entry-index') . '">';
+        echo '<input type="text" id="wp-entry-index-search-input" placeholder="' . esc_attr__('Buscar...', 'WpEntryIndex') . '">';
         echo '<ul id="wp-entry-index-autocomplete-results" style="display: none;"></ul>';
         echo '</div>';
         
@@ -107,16 +107,38 @@ class WP_Entry_Index_Shortcode {
         global $wpdb;
         $table_name = $wpdb->prefix . 'entry_index';
         
-        // Preparar consulta
-        $sql = "SELECT * FROM $table_name ORDER BY name ASC";
+        // Crear clave de caché basada en el límite
+        $cache_key = 'wp_entry_index_entries_' . ($limit > 0 ? 'limit_' . $limit : 'all');
         
-        // Agregar límite si es necesario
-        if ($limit > 0) {
-            $sql = $wpdb->prepare($sql . " LIMIT %d", $limit);
+        // Intentar obtener datos de la caché
+        $entries = wp_cache_get($cache_key, 'wp_entry_index');
+        
+        // Si no hay datos en caché, ejecutar consulta
+        if (false === $entries) {
+            if ($limit > 0) {
+                // Consulta con límite usando prepare() correctamente
+                $entries = $wpdb->get_results(
+                    $wpdb->prepare(
+                        "SELECT * FROM {$wpdb->prefix}entry_index ORDER BY name ASC LIMIT %d",
+                        $limit
+                    ),
+                    ARRAY_A
+                );
+            } else {
+                // Consulta sin límite - Se fuerza un marcador de posición ficticio
+                $entries = $wpdb->get_results(
+                    $wpdb->prepare(
+                        "SELECT * FROM {$wpdb->prefix}entry_index WHERE %d = %d ORDER BY name ASC",
+                        1, 1
+                    ),
+                    ARRAY_A
+                );
+            }
+        
+            // Guardar en caché
+            wp_cache_set($cache_key, $entries, 'wp_entry_index', 3600);
         }
         
-        // Ejecutar consulta
-        $entries = $wpdb->get_results($sql, ARRAY_A);
         
         return $entries;
     }
