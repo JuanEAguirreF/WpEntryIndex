@@ -88,6 +88,14 @@ class Personal_Post_Index_Shortcode {
             echo '<li class="personal-post-index-item">';
             echo '<a href="' . esc_url($entry['url']) . '" target="_blank">';
             echo esc_html($entry['name']);
+            
+            // Mostrar "Aporte por: NombreDeUsuario" solo si el autor no es administrador
+            if (isset($entry['is_admin']) && !$entry['is_admin'] && isset($entry['author_name'])) {
+                echo '<span class="personal-post-index-author">';
+                echo __('Aporte por:', 'PersonalPostIndex') . ' ' . esc_html($entry['author_name']);
+                echo '</span>';
+            }
+            
             echo '</a>';
             echo '</li>';
         }
@@ -134,11 +142,30 @@ class Personal_Post_Index_Shortcode {
                     ARRAY_A
                 );
             }
+            
+            // Añadir información del autor a cada entrada
+            if (!empty($entries)) {
+                foreach ($entries as &$entry) {
+                    // Obtener información del usuario que creó la entrada
+                    $user = get_userdata($entry['created_by']);
+                    
+                    // Verificar si el usuario existe
+                    if ($user) {
+                        $entry['author_name'] = $user->display_name;
+                        
+                        // Verificar si el usuario es administrador
+                        $entry['is_admin'] = user_can($user->ID, 'manage_options');
+                    } else {
+                        $entry['author_name'] = __('Usuario desconocido', 'PersonalPostIndex');
+                        $entry['is_admin'] = false;
+                    }
+                }
+                unset($entry); // Romper la referencia
+            }
         
             // Guardar en caché
             wp_cache_set($cache_key, $entries, 'wp_entry_index', 3600);
         }
-        
         
         return $entries;
     }

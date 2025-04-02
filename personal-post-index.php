@@ -3,7 +3,7 @@
  * Plugin Name: Personal Post Index
  * Plugin URI: 
  * Description: Plugin para crear un índice de publicaciones manualmente desde el panel de administración.
- * Version: 1.5.4
+ * Version: 1.5.5
  * Author: Waylayer
  * Author URI: https://profiles.wordpress.org/waylayer/
  * Text Domain: PersonalPostIndex
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('PERSONAL_POST_INDEX_VERSION', '1.5.4');
+define('PERSONAL_POST_INDEX_VERSION', '1.5.5');
 define('PERSONAL_POST_INDEX_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('PERSONAL_POST_INDEX_PLUGIN_URL', plugin_dir_url(__FILE__));
 
