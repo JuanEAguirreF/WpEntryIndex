@@ -1,4 +1,4 @@
-=== WP Entry Index ===
+=== Personal Post Index ===
 Contributors: waylayer
 Tags: index, entries, posts
 Requires at least: 5.0
@@ -12,7 +12,7 @@ Plugin para crear un índice de publicaciones manualmente desde el panel de admi
 
 == Description ==
 
-WP Entry Index permite crear y gestionar un índice de publicaciones manualmente desde el panel de administración. También puede configurarse para agregar automáticamente entradas al índice cuando se publican posts en categorías específicas.
+Personal Post Index permite crear y gestionar un índice de publicaciones manualmente desde el panel de administración. También puede configurarse para agregar automáticamente entradas al índice cuando se publican posts en categorías específicas.
 
 Características principales:
 
@@ -24,7 +24,7 @@ Características principales:
 
 == Installation ==
 
-1. Sube los archivos del plugin al directorio `/wp-content/plugins/wp-entry-index/`
+1. Sube los archivos del plugin al directorio `/wp-content/plugins/personal-post-index/`
 2. Activa el plugin a través del menú 'Plugins' en WordPress
 3. Configura el plugin en el menú 'Índice de Entradas'
 4. Usa el shortcode [wp_entry_index] para mostrar el índice en cualquier página o entrada

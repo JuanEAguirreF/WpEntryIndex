@@ -1,27 +1,27 @@
-.wp-entry-index-actions {
+.personal-post-index-actions {
     margin: 20px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.wp-entry-index-search form {
+.personal-post-index-search form {
     display: flex;
     align-items: center;
     padding:20px 0;
 }
 
-.wp-entry-index-search input[type="search"] {
+.personal-post-index-search input[type="search"] {
     margin-right: 5px;
     min-width: 300px;
 }
 
-.wp-entry-index-buttons {
+.personal-post-index-buttons {
     display: flex;
     gap: 10px;
 }
 
-.wp-entry-index-table {
+.personal-post-index-table {
     margin-top: 20px;
 }
 
@@ -44,7 +44,7 @@
 }
 
 /* Estilos para el modal */
-.wp-entry-index-modal {
+.personal-post-index-modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -56,7 +56,7 @@
     background-color: rgba(0,0,0,0.4);
 }
 
-.wp-entry-index-modal-content {
+.personal-post-index-modal-content {
     background-color: #fefefe;
     margin: 10% auto;
     padding: 20px;
@@ -66,7 +66,7 @@
     border-radius: 4px;
 }
 
-.wp-entry-index-modal-close {
+.personal-post-index-modal-close {
     color: #aaa;
     float: right;
     font-size: 28px;
@@ -74,48 +74,48 @@
     cursor: pointer;
 }
 
-.wp-entry-index-modal-close:hover,
-.wp-entry-index-modal-close:focus {
+.personal-post-index-modal-close:hover,
+.personal-post-index-modal-close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
 }
 
-.wp-entry-index-form-group {
+.personal-post-index-form-group {
     margin-bottom: 15px;
 }
 
-.wp-entry-index-form-group label {
+.personal-post-index-form-group label {
     display: block;
     margin-bottom: 5px;
     font-weight: 600;
 }
 
-.wp-entry-index-form-group input {
+.personal-post-index-form-group input {
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
 }
 
-.wp-entry-index-form-group input[type="checkbox"] {
+.personal-post-index-form-group input[type="checkbox"] {
     width: 18px;
 }
 
-.wp-entry-index-form-actions {
+.personal-post-index-form-actions {
     margin-top: 20px;
     text-align: right;
 }
 
-.wp-entry-index-form-actions button {
+.personal-post-index-form-actions button {
     margin-left: 10px;
 }
 
 /* Estilos para el selector de categorías */
-.wp-entry-index-category-search-container {
+.personal-post-index-category-search-container {
     position: relative;
 }
 
-.wp-entry-index-category-results {
+.personal-post-index-category-results {
     position: absolute;
     top: 100%;
     left: 0;
@@ -129,32 +129,32 @@
     display: none;
 }
 
-.wp-entry-index-category-results.active {
+.personal-post-index-category-results.active {
     display: block;
 }
 
-.wp-entry-index-category-item {
+.personal-post-index-category-item {
     padding: 8px 12px;
     cursor: pointer;
     border-bottom: 1px solid #f0f0f0;
 }
 
-.wp-entry-index-category-item:hover {
+.personal-post-index-category-item:hover {
     background-color: #f9f9f9;
 }
 
-.wp-entry-index-category-item:last-child {
+.personal-post-index-category-item:last-child {
     border-bottom: none;
 }
 
-.wp-entry-index-selected-categories {
+.personal-post-index-selected-categories {
     margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
-.wp-entry-index-category-tag {
+.personal-post-index-category-tag {
     display: inline-flex;
     align-items: center;
     background-color: #f0f0f0;
@@ -164,21 +164,21 @@
     margin-bottom: 5px;
 }
 
-.wp-entry-index-category-tag span {
+.personal-post-index-category-tag span {
     margin-right: 5px;
 }
 
-.wp-entry-index-remove-category {
+.personal-post-index-remove-category {
     color: #999;
     text-decoration: none;
     font-weight: bold;
 }
 
-.wp-entry-index-remove-category:hover {
+.personal-post-index-remove-category:hover {
     color: #d54e21;
 }
 
-.wp-entry-index-no-categories {
+.personal-post-index-no-categories {
     color: #999;
     font-style: italic;
 }

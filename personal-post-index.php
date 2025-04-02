@@ -1,12 +1,12 @@
 <?php
 /**
- * Plugin Name: WP Entry Index
+ * Plugin Name: Personal Post Index
  * Plugin URI: 
  * Description: Plugin para crear un índice de publicaciones manualmente desde el panel de administración.
- * Version: 1.5.3
+ * Version: 1.5.4
  * Author: Waylayer
  * Author URI: https://profiles.wordpress.org/waylayer/
- * Text Domain: WpEntryIndex
+ * Text Domain: PersonalPostIndex
  * Domain Path: /languages
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -18,12 +18,12 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('WP_ENTRY_INDEX_VERSION', '1.5.3');
-define('WP_ENTRY_INDEX_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('WP_ENTRY_INDEX_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('PERSONAL_POST_INDEX_VERSION', '1.5.4');
+define('PERSONAL_POST_INDEX_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('PERSONAL_POST_INDEX_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 // Clase principal del plugin
-class WP_Entry_Index {
+class Personal_Post_Index {
     
     // Instancia única (patrón singleton)
     private static $instance = null;
@@ -80,7 +80,7 @@ class WP_Entry_Index {
     // Inicializar el plugin
     public function init() {
         // Cargar traducciones
-        load_plugin_textdomain('WpEntryIndex', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        load_plugin_textdomain('PersonalPostIndex', false, dirname(plugin_basename(__FILE__)) . '/languages');
         
         // Incluir archivos necesarios
         $this->includes();
@@ -92,19 +92,19 @@ class WP_Entry_Index {
     // Incluir archivos necesarios
     private function includes() {
         // Admin
-        require_once WP_ENTRY_INDEX_PLUGIN_DIR . 'includes/admin/class-wp-entry-index-admin.php';
+        require_once PERSONAL_POST_INDEX_PLUGIN_DIR . 'includes/admin/class-personal-post-index-admin.php';
         
         // Shortcode
-        require_once WP_ENTRY_INDEX_PLUGIN_DIR . 'includes/shortcodes/class-wp-entry-index-shortcode.php';
+        require_once PERSONAL_POST_INDEX_PLUGIN_DIR . 'includes/shortcodes/class-personal-post-index-shortcode.php';
     }
     
     // Inicializar hooks
     private function init_hooks() {
         // Inicializar admin
-        WP_Entry_Index_Admin::init();
+        Personal_Post_Index_Admin::init();
         
         // Registrar shortcode
-        WP_Entry_Index_Shortcode::init();
+        Personal_Post_Index_Shortcode::init();
         
         // Hook para agregar entradas automáticamente cuando se publica un post
         // Usamos transition_post_status para detectar específicamente cuando un post cambia a 'publish'
@@ -121,11 +121,11 @@ class WP_Entry_Index {
     public function check_post_status($new_status, $old_status, $post) {
         // Solo procesar cuando un post cambia a 'publish'
         if ($new_status === 'publish' && $old_status !== 'publish' && $post->post_type === 'post') {
-            error_log('WP Entry Index: Post ' . $post->ID . ' cambió de estado ' . $old_status . ' a ' . $new_status);
+            error_log('Personal Post Index: Post ' . $post->ID . ' cambió de estado ' . $old_status . ' a ' . $new_status);
             
             // Programar la ejecución con un retraso de 5 segundos para permitir que WordPress finalice el guardado
             wp_schedule_single_event(time() + 5, 'wp_entry_index_process_post', array($post->ID));
-            error_log('WP Entry Index: Programada la detección de categorías con retraso para el post ' . $post->ID);
+            error_log('Personal Post Index: Programada la detección de categorías con retraso para el post ' . $post->ID);
         }
     }
     
@@ -134,7 +134,7 @@ class WP_Entry_Index {
     public function add_post_to_index($post_id) {
         // Verificar si ya existe un evento programado para este post
         if (wp_next_scheduled('wp_entry_index_process_post', array($post_id))) {
-            error_log('WP Entry Index: Ya existe un evento programado para el post ' . $post_id . ', no se procesa inmediatamente.');
+            error_log('Personal Post Index: Ya existe un evento programado para el post ' . $post_id . ', no se procesa inmediatamente.');
             return;
         }
         
@@ -146,7 +146,7 @@ class WP_Entry_Index {
     public function process_post_for_index($post_id) {
         // Verificar si es una revisión o un autoguardado
         if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
-            error_log('WP Entry Index: Post ' . $post_id . ' es una revisión o autoguardado, no se procesa.');
+            error_log('Personal Post Index: Post ' . $post_id . ' es una revisión o autoguardado, no se procesa.');
             return;
         }
         
@@ -155,20 +155,20 @@ class WP_Entry_Index {
         
         // Verificar que sea un post público
         if ($post->post_status !== 'publish' || $post->post_type !== 'post') {
-            error_log('WP Entry Index: Post ' . $post_id . ' no es un post publicado o no es del tipo post. Estado: ' . $post->post_status . ', Tipo: ' . $post->post_type);
+            error_log('Personal Post Index: Post ' . $post_id . ' no es un post publicado o no es del tipo post. Estado: ' . $post->post_status . ', Tipo: ' . $post->post_type);
             return;
         }
         
-        error_log('WP Entry Index: Procesando post ' . $post_id . ' - ' . $post->post_title);
+        error_log('Personal Post Index: Procesando post ' . $post_id . ' - ' . $post->post_title);
         
         // Limpiar la caché del post para asegurar que obtenemos los datos más recientes
         clean_post_cache($post_id);
         wp_cache_delete($post_id, 'posts');
-        error_log('WP Entry Index: Caché del post limpiada para asegurar datos actualizados');
+        error_log('Personal Post Index: Caché del post limpiada para asegurar datos actualizados');
         
         // Obtener las categorías seleccionadas en la configuración
         $selected_categories = get_option('wp_entry_index_categories', array());
-        error_log('WP Entry Index: Categorías seleccionadas en configuración (tipo: ' . gettype($selected_categories) . '): ' . print_r($selected_categories, true));
+        error_log('Personal Post Index: Categorías seleccionadas en configuración (tipo: ' . gettype($selected_categories) . '): ' . print_r($selected_categories, true));
         
         // Si hay categorías seleccionadas, verificar si el post pertenece a alguna de ellas
         if (!empty($selected_categories)) {
@@ -183,49 +183,49 @@ class WP_Entry_Index {
                 }
             }
             
-            error_log('WP Entry Index: Categorías del post (get_the_category): ' . print_r($post_categories, true));
+            error_log('Personal Post Index: Categorías del post (get_the_category): ' . print_r($post_categories, true));
             
             // También obtener categorías con el método anterior para comparación en logs
             $old_post_categories = wp_get_post_categories($post_id, array('fields' => 'ids'));
-            error_log('WP Entry Index: Categorías del post (wp_get_post_categories): ' . print_r($old_post_categories, true));
+            error_log('Personal Post Index: Categorías del post (wp_get_post_categories): ' . print_r($old_post_categories, true));
             
             // Verificar si hay intersección entre las categorías del post y las seleccionadas
             $category_match = false;
-            error_log('WP Entry Index: Tipo de dato de post_categories: ' . gettype($post_categories));
-            error_log('WP Entry Index: Tipo de dato de selected_categories: ' . gettype($selected_categories));
+            error_log('Personal Post Index: Tipo de dato de post_categories: ' . gettype($post_categories));
+            error_log('Personal Post Index: Tipo de dato de selected_categories: ' . gettype($selected_categories));
             
             // Obtener los IDs de categorías seleccionadas y asegurar que sean enteros
             $selected_cat_ids = array_map('intval', array_keys($selected_categories));
-            error_log('WP Entry Index: IDs de categorías seleccionadas: ' . implode(', ', $selected_cat_ids));
+            error_log('Personal Post Index: IDs de categorías seleccionadas: ' . implode(', ', $selected_cat_ids));
             
             // Simplificar la comparación de categorías
             $category_match = count(array_intersect($post_categories, $selected_cat_ids)) > 0;
             
             if ($category_match) {
-                error_log('WP Entry Index: Coincidencia encontrada entre categorías del post y categorías seleccionadas');
+                error_log('Personal Post Index: Coincidencia encontrada entre categorías del post y categorías seleccionadas');
             } else {
                 // Verificación adicional para compatibilidad con diferentes tipos de datos
                 foreach ($post_categories as $cat_id) {
                     $cat_id_str = strval($cat_id);
                     $cat_id_int = intval($cat_id);
                     
-                    error_log('WP Entry Index: Verificando categoría ' . $cat_id . ' (tipo: ' . gettype($cat_id) . ')');
+                    error_log('Personal Post Index: Verificando categoría ' . $cat_id . ' (tipo: ' . gettype($cat_id) . ')');
                     
                     if (in_array($cat_id, $selected_cat_ids) || 
                         isset($selected_categories[$cat_id]) || 
                         isset($selected_categories[$cat_id_str])) {
                         $category_match = true;
-                        error_log('WP Entry Index: Coincidencia encontrada en categoría ' . $cat_id);
+                        error_log('Personal Post Index: Coincidencia encontrada en categoría ' . $cat_id);
                         break;
                     } else {
-                        error_log('WP Entry Index: Categoría ' . $cat_id . ' no coincide con ninguna categoría seleccionada');
+                        error_log('Personal Post Index: Categoría ' . $cat_id . ' no coincide con ninguna categoría seleccionada');
                     }
                 }
             }
             
             // Si no hay coincidencia, no agregar al índice
             if (!$category_match) {
-                error_log('WP Entry Index: No se encontraron coincidencias de categorías para el post ' . $post_id . ', no se agrega al índice.');
+                error_log('Personal Post Index: No se encontraron coincidencias de categorías para el post ' . $post_id . ', no se agrega al índice.');
                 return;
             }
         }
@@ -259,7 +259,7 @@ class WP_Entry_Index {
         
         // Si ya existe, no hacer nada
         if ($existing) {
-            error_log('WP Entry Index: Ya existe una entrada con la URL ' . $url . ', no se agrega al índice.');
+            error_log('Personal Post Index: Ya existe una entrada con la URL ' . $url . ', no se agrega al índice.');
             return;
         }
         
@@ -276,16 +276,16 @@ class WP_Entry_Index {
         );
         
         if ($result) {
-            error_log('WP Entry Index: Entrada agregada correctamente al índice. ID: ' . $wpdb->insert_id);
+            error_log('Personal Post Index: Entrada agregada correctamente al índice. ID: ' . $wpdb->insert_id);
         } else {
-            error_log('WP Entry Index: Error al agregar entrada al índice: ' . $wpdb->last_error);
+            error_log('Personal Post Index: Error al agregar entrada al índice: ' . $wpdb->last_error);
         }
     }
 }
 
 // Iniciar el plugin
 function wp_entry_index() {
-    return WP_Entry_Index::get_instance();
+    return Personal_Post_Index::get_instance();
 }
 
 // Arrancar el plugin

@@ -1,12 +1,12 @@
 jQuery(document).ready(function($) {
     // Variables
     var searchTimeout;
-    var categorySearch = $('#wp-entry-index-category-search');
-    var categoryResults = $('#wp-entry-index-category-results');
-    var selectedCategories = $('#wp-entry-index-selected-categories');
-    var noCategories = $('.wp-entry-index-no-categories');
-    var settingsForm = $('#wp-entry-index-settings-form');
-    var settingsNotice = $('#wp-entry-index-settings-notice');
+    var categorySearch = $('#personal-post-index-category-search');
+    var categoryResults = $('#personal-post-index-category-results');
+    var selectedCategories = $('#personal-post-index-selected-categories');
+    var noCategories = $('.personal-post-index-no-categories');
+    var settingsForm = $('#personal-post-index-settings-form');
+    var settingsNotice = $('#personal-post-index-settings-notice');
     
     // Función para buscar categorías
     function searchCategories(query) {
@@ -63,7 +63,7 @@ jQuery(document).ready(function($) {
         }
         
         // Crear lista de resultados
-        var resultsList = $('<ul class="wp-entry-index-category-list"></ul>');
+        var resultsList = $('<ul class="personal-post-index-category-list"></ul>');
         var validItemsCount = 0;
         
         // Añadir cada categoría a la lista
@@ -81,7 +81,7 @@ jQuery(document).ready(function($) {
             if (!isSelected) {
                 // Escapar el nombre de la categoría para evitar problemas con caracteres especiales
                 var escapedName = $('<div/>').text(category.text).html();
-                var item = $('<li class="wp-entry-index-category-item" data-id="' + category.id + '">' + category.text + '</li>');
+                var item = $('<li class="personal-post-index-category-item" data-id="' + category.id + '">' + category.text + '</li>');
                 resultsList.append(item);
                 validItemsCount++;
             }
@@ -103,9 +103,9 @@ jQuery(document).ready(function($) {
         noCategories.hide();
         
         // Crear etiqueta de categoría
-        var categoryTag = $('<div class="wp-entry-index-category-tag" data-id="' + id + '">' +
+        var categoryTag = $('<div class="personal-post-index-category-tag" data-id="' + id + '">' +
                            '<span>' + name + '</span>' +
-                           '<a href="#" class="wp-entry-index-remove-category">&times;</a>' +
+                           '<a href="#" class="personal-post-index-remove-category">&times;</a>' +
                            '<input type="hidden" name="wp_entry_index_categories[' + id + ']" value="' + name + '">' +
                            '</div>');
         
@@ -123,7 +123,7 @@ jQuery(document).ready(function($) {
         categoryTag.remove();
         
         // Si no hay categorías seleccionadas, mostrar mensaje
-        if (selectedCategories.children('.wp-entry-index-category-tag').length === 0) {
+        if (selectedCategories.children('.personal-post-index-category-tag').length === 0) {
             noCategories.show();
         }
     }
@@ -183,7 +183,7 @@ jQuery(document).ready(function($) {
     });
     
     // Evento: Seleccionar categoría de los resultados
-    categoryResults.on('click', '.wp-entry-index-category-item', function() {
+    categoryResults.on('click', '.personal-post-index-category-item', function() {
         var id = $(this).data('id');
         // Obtener el nombre directamente del contenido del elemento en lugar de usar data-name
         var name = $(this).text();
@@ -192,9 +192,9 @@ jQuery(document).ready(function($) {
     });
     
     // Evento: Eliminar categoría seleccionada
-    selectedCategories.on('click', '.wp-entry-index-remove-category', function(e) {
+    selectedCategories.on('click', '.personal-post-index-remove-category', function(e) {
         e.preventDefault();
-        var categoryTag = $(this).closest('.wp-entry-index-category-tag');
+        var categoryTag = $(this).closest('.personal-post-index-category-tag');
         removeSelectedCategory(categoryTag);
     });
     
@@ -206,7 +206,7 @@ jQuery(document).ready(function($) {
     
     // Ocultar resultados al hacer clic fuera
     $(document).on('click', function(e) {
-        if (!$(e.target).closest('.wp-entry-index-category-search-container').length) {
+        if (!$(e.target).closest('.personal-post-index-category-search-container').length) {
             categoryResults.hide();
         }
     });

@@ -3,11 +3,11 @@
 
     $(document).ready(function() {
         // Elementos del DOM
-        const $container = $('.wp-entry-index-container');
-        const $searchContainer = $('.wp-entry-index-search-container');
-        const $searchInput = $('#wp-entry-index-search-input');
-        const $autocompleteResults = $('#wp-entry-index-autocomplete-results');
-        const $indexItems = $('.wp-entry-index-item');
+        const $container = $('.personal-post-index-container');
+        const $searchContainer = $('.personal-post-index-search-container');
+        const $searchInput = $('#personal-post-index-search-input');
+        const $autocompleteResults = $('#personal-post-index-autocomplete-results');
+        const $indexItems = $('.personal-post-index-item');
         
         // Variables para el autocompletado
         let allItems = [];
@@ -56,7 +56,7 @@
             
             // Cerrar autocompletado al hacer clic fuera
             $(document).on('click', function(e) {
-                if (!$(e.target).closest('.wp-entry-index-search-container').length) {
+                if (!$(e.target).closest('.personal-post-index-search-container').length) {
                     hideAutocompleteResults();
                 }
             });

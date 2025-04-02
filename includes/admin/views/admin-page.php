@@ -12,60 +12,60 @@ if (!defined('ABSPATH')) {
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
     
     <!-- Mensajes de notificación -->
-    <div id="wp-entry-index-notice" class="notice" style="display: none;"></div>
+    <div id="personal-post-index-notice" class="notice" style="display: none;"></div>
     
     <!-- Formulario de búsqueda y acciones -->
-    <div class="wp-entry-index-actions">
-        <div class="wp-entry-index-search">
+    <div class="personal-post-index-actions">
+        <div class="personal-post-index-search">
             <form method="get">
-                <input type="hidden" name="page" value="wp-entry-index">
-                <input type="search" name="s" value="<?php echo esc_attr($search_query); ?>" placeholder="<?php esc_html_e('Buscar entradas...', 'WpEntryIndex'); ?>">
-                <input type="submit" class="button" value="<?php esc_html_e('Buscar', 'WpEntryIndex'); ?>">
+                <input type="hidden" name="page" value="personal-post-index">
+                <input type="search" name="s" value="<?php echo esc_attr($search_query); ?>" placeholder="<?php esc_html_e('Buscar entradas...', 'PersonalPostIndex'); ?>">
+                <input type="submit" class="button" value="<?php esc_html_e('Buscar', 'PersonalPostIndex'); ?>">
                 <?php if (!empty($search_query)) : ?>
-                    <a href="<?php echo esc_url(admin_url('admin.php?page=wp-entry-index')); ?>" class="button"><?php esc_html_e('Limpiar', 'WpEntryIndex'); ?></a>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=personal-post-index')); ?>" class="button"><?php esc_html_e('Limpiar', 'PersonalPostIndex'); ?></a>
                 <?php endif; ?>
             </form>
         </div>
-        <div class="wp-entry-index-buttons">
-            <button id="wp-entry-index-add-button" class="button button-primary">
-                <?php esc_html_e('Agregar Nuevo', 'WpEntryIndex'); ?>
+        <div class="personal-post-index-buttons">
+            <button id="personal-post-index-add-button" class="button button-primary">
+                <?php esc_html_e('Agregar Nuevo', 'PersonalPostIndex'); ?>
             </button>
-            <button id="wp-entry-index-import-button" class="button button-primary">
-                <?php esc_html_e('Importar CSV', 'WpEntryIndex'); ?>
+            <button id="personal-post-index-import-button" class="button button-primary">
+                <?php esc_html_e('Importar CSV', 'PersonalPostIndex'); ?>
             </button>
         </div>
     </div>
     
     <!-- Tabla de entradas -->
-    <table class="wp-list-table widefat fixed striped wp-entry-index-table">
+    <table class="wp-list-table widefat fixed striped personal-post-index-table">
         <thead>
             <tr>
-                <th><?php esc_html_e('ID', 'WpEntryIndex'); ?></th>
-                <th><?php esc_html_e('Nombre', 'WpEntryIndex'); ?></th>
-                <th><?php esc_html_e('URL', 'WpEntryIndex'); ?></th>
-                <th><?php esc_html_e('Creado por', 'WpEntryIndex'); ?></th>
-                <th><?php esc_html_e('Fecha de creación', 'WpEntryIndex'); ?></th>
-                <th><?php esc_html_e('Modificado por', 'WpEntryIndex'); ?></th>
-                <th><?php esc_html_e('Fecha de modificación', 'WpEntryIndex'); ?></th>
-                <th><?php esc_html_e('Acciones', 'WpEntryIndex'); ?></th>
+                <th><?php esc_html_e('ID', 'PersonalPostIndex'); ?></th>
+                <th><?php esc_html_e('Nombre', 'PersonalPostIndex'); ?></th>
+                <th><?php esc_html_e('URL', 'PersonalPostIndex'); ?></th>
+                <th><?php esc_html_e('Creado por', 'PersonalPostIndex'); ?></th>
+                <th><?php esc_html_e('Fecha de creación', 'PersonalPostIndex'); ?></th>
+                <th><?php esc_html_e('Modificado por', 'PersonalPostIndex'); ?></th>
+                <th><?php esc_html_e('Fecha de modificación', 'PersonalPostIndex'); ?></th>
+                <th><?php esc_html_e('Acciones', 'PersonalPostIndex'); ?></th>
             </tr>
         </thead>
-        <tbody id="wp-entry-index-table-body">
+        <tbody id="personal-post-index-table-body">
             <?php if (empty($entries)) : ?>
                 <tr>
-                    <td colspan="8"><?php esc_html_e('No hay entradas disponibles.', 'WpEntryIndex'); ?></td>
+                    <td colspan="8"><?php esc_html_e('No hay entradas disponibles.', 'PersonalPostIndex'); ?></td>
                 </tr>
             <?php else : ?>
                 <?php foreach ($entries as $entry) : 
                     // Obtener información de usuarios
                     $created_user = get_userdata($entry['created_by']);
-                    $created_by_name = $created_user ? $created_user->display_name : __('Usuario desconocido', 'WpEntryIndex');
+                    $created_by_name = $created_user ? $created_user->display_name : __('Usuario desconocido', 'PersonalPostIndex');
                     
                     $modified_by_name = '';
                     $modified_at = '';
                     if (!empty($entry['modified_by'])) {
                         $modified_user = get_userdata($entry['modified_by']);
-                        $modified_by_name = $modified_user ? $modified_user->display_name : __('Usuario desconocido', 'WpEntryIndex');
+                        $modified_by_name = $modified_user ? $modified_user->display_name : __('Usuario desconocido', 'PersonalPostIndex');
                         $modified_at = $entry['modified_at'];
                     }
                 ?>
@@ -78,11 +78,11 @@ if (!defined('ABSPATH')) {
                     <td><?php echo esc_html($modified_by_name); ?></td>
                     <td><?php echo esc_html($modified_at); ?></td>
                     <td>
-                        <button class="button wp-entry-index-edit" data-id="<?php echo esc_attr($entry['id']); ?>">
-                            <?php esc_html_e('Editar', 'WpEntryIndex'); ?>
+                        <button class="button personal-post-index-edit" data-id="<?php echo esc_attr($entry['id']); ?>">
+                            <?php esc_html_e('Editar', 'PersonalPostIndex'); ?>
                         </button>
-                        <button class="button wp-entry-index-delete" data-id="<?php echo esc_attr($entry['id']); ?>">
-                            <?php esc_html_e('Borrar', 'WpEntryIndex'); ?>
+                        <button class="button personal-post-index-delete" data-id="<?php echo esc_attr($entry['id']); ?>">
+                            <?php esc_html_e('Borrar', 'PersonalPostIndex'); ?>
                         </button>
                     </td>
                 </tr>
@@ -98,12 +98,12 @@ if (!defined('ABSPATH')) {
             <span class="displaying-num">
                 <?php
                 // Translators: %s: Number of elements in the list
-                echo esc_html(sprintf(_n('%s elemento', '%s elementos', $total_entries, 'WpEntryIndex'), number_format_i18n($total_entries))); ?>
+                echo esc_html(sprintf(_n('%s elemento', '%s elementos', $total_entries, 'PersonalPostIndex'), number_format_i18n($total_entries))); ?>
             </span>
             <span class="pagination-links">
                 <?php
                 // Construir URL base para paginación
-                $base_url = add_query_arg('page', 'wp-entry-index', admin_url('admin.php'));
+                $base_url = add_query_arg('page', 'personal-post-index', admin_url('admin.php'));
                 if (!empty($search_query)) {
                     $base_url = add_query_arg('s', urlencode($search_query), $base_url);
                 }
@@ -111,7 +111,7 @@ if (!defined('ABSPATH')) {
                 // Primera página
                 if ($current_page > 1) :
                     $first_url = esc_url(add_query_arg('paged', 1, $base_url));
-                    echo '<a class="first-page button" href="' . esc_url($first_url) . '"><span class="screen-reader-text">' . esc_html__('Primera página', 'WpEntryIndex') . '</span><span aria-hidden="true">&laquo;</span></a>';
+                    echo '<a class="first-page button" href="' . esc_url($first_url) . '"><span class="screen-reader-text">' . esc_html__('Primera página', 'PersonalPostIndex') . '</span><span aria-hidden="true">&laquo;</span></a>';
                 else :
                     echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>';
                 endif;
@@ -119,20 +119,20 @@ if (!defined('ABSPATH')) {
                 // Página anterior
                 if ($current_page > 1) :
                     $prev_url = esc_url(add_query_arg('paged', $current_page - 1, $base_url));
-                    echo '<a class="prev-page button" href="' . esc_url($prev_url) . '"><span class="screen-reader-text">' . esc_html__('Página anterior', 'WpEntryIndex') . '</span><span aria-hidden="true">&lsaquo;</span></a>';
+                    echo '<a class="prev-page button" href="' . esc_url($prev_url) . '"><span class="screen-reader-text">' . esc_html__('Página anterior', 'PersonalPostIndex') . '</span><span aria-hidden="true">&lsaquo;</span></a>';
                 else :
                     echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&lsaquo;</span>';
                 endif;
                 
                 // Número de página actual
                 echo '<span class="paging-input">';
-                echo '<span class="tablenav-paging-text">' . esc_html($current_page) . ' ' . esc_html__('de', 'WpEntryIndex') . ' <span class="total-pages">' . esc_html($total_pages) . '</span></span>';
+                echo '<span class="tablenav-paging-text">' . esc_html($current_page) . ' ' . esc_html__('de', 'PersonalPostIndex') . ' <span class="total-pages">' . esc_html($total_pages) . '</span></span>';
                 echo '</span>';
                 
                 // Página siguiente
                 if ($current_page < $total_pages) :
                     $next_url = esc_url(add_query_arg('paged', $current_page + 1, $base_url));
-                    echo '<a class="next-page button" href="' . esc_url($next_url) . '"><span class="screen-reader-text">' . esc_html__('Página siguiente', 'WpEntryIndex') . '</span><span aria-hidden="true">&rsaquo;</span></a>';
+                    echo '<a class="next-page button" href="' . esc_url($next_url) . '"><span class="screen-reader-text">' . esc_html__('Página siguiente', 'PersonalPostIndex') . '</span><span aria-hidden="true">&rsaquo;</span></a>';
                 else :
                     echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&rsaquo;</span>';
                 endif;
@@ -140,7 +140,7 @@ if (!defined('ABSPATH')) {
                 // Última página
                 if ($current_page < $total_pages) :
                     $last_url = esc_url(add_query_arg('paged', $total_pages, $base_url));
-                    echo '<a class="last-page button" href="' . esc_url($last_url) . '"><span class="screen-reader-text">' . esc_html__('Última página', 'WpEntryIndex') . '</span><span aria-hidden="true">&raquo;</span></a>';
+                    echo '<a class="last-page button" href="' . esc_url($last_url) . '"><span class="screen-reader-text">' . esc_html__('Última página', 'PersonalPostIndex') . '</span><span aria-hidden="true">&raquo;</span></a>';
                 else :
                     echo '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&raquo;</span>';
                 endif;
@@ -151,7 +151,7 @@ if (!defined('ABSPATH')) {
     <?php endif; ?>
     
     <!-- Template para nueva fila -->
-    <script type="text/template" id="wp-entry-index-row-template">
+    <script type="text/template" id="personal-post-index-row-template">
         <tr data-id="{{id}}">
             <td>{{id}}</td>
             <td>{{name}}</td>
@@ -161,37 +161,37 @@ if (!defined('ABSPATH')) {
             <td>{{modified_by_name}}</td>
             <td>{{modified_at}}</td>
             <td>
-                <button class="button wp-entry-index-edit" data-id="{{id}}">
-                    <?php esc_html_e('Editar', 'WpEntryIndex'); ?>
+                <button class="button personal-post-index-edit" data-id="{{id}}">
+                    <?php esc_html_e('Editar', 'PersonalPostIndex'); ?>
                 </button>
-                <button class="button wp-entry-index-delete" data-id="{{id}}">
-                    <?php esc_html_e('Borrar', 'WpEntryIndex'); ?>
+                <button class="button personal-post-index-delete" data-id="{{id}}">
+                    <?php esc_html_e('Borrar', 'PersonalPostIndex'); ?>
                 </button>
             </td>
         </tr>
     </script>
     
     <!-- Modal para agregar/editar entrada -->
-    <div id="wp-entry-index-modal" class="wp-entry-index-modal" style="display: none;">
-        <div class="wp-entry-index-modal-content">
-            <span class="wp-entry-index-modal-close">&times;</span>
-            <h2 id="wp-entry-index-modal-title"><?php esc_html_e('Agregar Entrada', 'WpEntryIndex'); ?></h2>
-            <form id="wp-entry-index-form">
-                <input type="hidden" id="wp-entry-index-id" name="id" value="">
-                <div class="wp-entry-index-form-group">
-                    <label for="wp-entry-index-name"><?php esc_html_e('Nombre', 'WpEntryIndex'); ?></label>
-                    <input type="text" id="wp-entry-index-name" name="name" required>
+    <div id="personal-post-index-modal" class="personal-post-index-modal" style="display: none;">
+        <div class="personal-post-index-modal-content">
+            <span class="personal-post-index-modal-close">&times;</span>
+            <h2 id="personal-post-index-modal-title"><?php esc_html_e('Agregar Entrada', 'PersonalPostIndex'); ?></h2>
+            <form id="personal-post-index-form">
+                <input type="hidden" id="personal-post-index-id" name="id" value="">
+                <div class="personal-post-index-form-group">
+                    <label for="personal-post-index-name"><?php esc_html_e('Nombre', 'PersonalPostIndex'); ?></label>
+                    <input type="text" id="personal-post-index-name" name="name" required>
                 </div>
-                <div class="wp-entry-index-form-group">
-                    <label for="wp-entry-index-url"><?php esc_html_e('URL', 'WpEntryIndex'); ?></label>
-                    <input type="url" id="wp-entry-index-url" name="url" required>
+                <div class="personal-post-index-form-group">
+                    <label for="personal-post-index-url"><?php esc_html_e('URL', 'PersonalPostIndex'); ?></label>
+                    <input type="url" id="personal-post-index-url" name="url" required>
                 </div>
-                <div class="wp-entry-index-form-actions">
+                <div class="personal-post-index-form-actions">
                     <button type="submit" class="button button-primary">
-                        <?php esc_html_e('Guardar', 'WpEntryIndex'); ?>
+                        <?php esc_html_e('Guardar', 'PersonalPostIndex'); ?>
                     </button>
-                    <button type="button" class="button wp-entry-index-modal-cancel">
-                        <?php esc_html_e('Cancelar', 'WpEntryIndex'); ?>
+                    <button type="button" class="button personal-post-index-modal-cancel">
+                        <?php esc_html_e('Cancelar', 'PersonalPostIndex'); ?>
                     </button>
                 </div>
             </form>
@@ -199,34 +199,34 @@ if (!defined('ABSPATH')) {
     </div>
     
     <!-- Modal para importar CSV -->
-    <div id="wp-entry-index-import-modal" class="wp-entry-index-modal" style="display: none;">
-        <div class="wp-entry-index-modal-content">
-            <span class="wp-entry-index-modal-close">&times;</span>
-            <h2><?php esc_html_e('Importar CSV', 'WpEntryIndex'); ?></h2>
-            <form id="wp-entry-index-import-form" enctype="multipart/form-data">
-                <div class="wp-entry-index-form-group">
-                    <label for="wp-entry-index-csv-file"><?php esc_html_e('Archivo CSV', 'WpEntryIndex'); ?></label>
-                    <input type="file" id="wp-entry-index-csv-file" name="csv_file" accept=".csv" required>
-                    <p class="description"><?php esc_html_e('El archivo debe tener dos columnas: Nombre y URL.', 'WpEntryIndex'); ?></p>
+    <div id="personal-post-index-import-modal" class="personal-post-index-modal" style="display: none;">
+        <div class="personal-post-index-modal-content">
+            <span class="personal-post-index-modal-close">&times;</span>
+            <h2><?php esc_html_e('Importar CSV', 'PersonalPostIndex'); ?></h2>
+            <form id="personal-post-index-import-form" enctype="multipart/form-data">
+                <div class="personal-post-index-form-group">
+                    <label for="personal-post-index-csv-file"><?php esc_html_e('Archivo CSV', 'PersonalPostIndex'); ?></label>
+                    <input type="file" id="personal-post-index-csv-file" name="csv_file" accept=".csv" required>
+                    <p class="description"><?php esc_html_e('El archivo debe tener dos columnas: Nombre y URL.', 'PersonalPostIndex'); ?></p>
                 </div>
-                <div class="wp-entry-index-form-group">
-                    <label for="wp-entry-index-skip-header">
-                        <input type="checkbox" id="wp-entry-index-skip-header" name="skip_header" checked>
-                        <?php esc_html_e('Omitir primera fila (encabezados)', 'WpEntryIndex'); ?>
+                <div class="personal-post-index-form-group">
+                    <label for="personal-post-index-skip-header">
+                        <input type="checkbox" id="personal-post-index-skip-header" name="skip_header" checked>
+                        <?php esc_html_e('Omitir primera fila (encabezados)', 'PersonalPostIndex'); ?>
                     </label>
                 </div>
-                <div class="wp-entry-index-form-actions">
+                <div class="personal-post-index-form-actions">
                     <button type="submit" class="button button-primary">
-                        <?php esc_html_e('Importar', 'WpEntryIndex'); ?>
+                        <?php esc_html_e('Importar', 'PersonalPostIndex'); ?>
                     </button>
-                    <button type="button" class="button wp-entry-index-modal-cancel">
-                        <?php esc_html_e('Cancelar', 'WpEntryIndex'); ?>
+                    <button type="button" class="button personal-post-index-modal-cancel">
+                        <?php esc_html_e('Cancelar', 'PersonalPostIndex'); ?>
                     </button>
                 </div>
             </form>
-            <div id="wp-entry-index-import-results" style="display: none;">
-                <h3><?php esc_html_e('Resultados de la importación', 'WpEntryIndex'); ?></h3>
-                <div id="wp-entry-index-import-summary"></div>
+            <div id="personal-post-index-import-results" style="display: none;">
+                <h3><?php esc_html_e('Resultados de la importación', 'PersonalPostIndex'); ?></h3>
+                <div id="personal-post-index-import-summary"></div>
             </div>
         </div>
     </div>

@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class WP_Entry_Index_Shortcode {
+class Personal_Post_Index_Shortcode {
     
     // Inicializar la clase
     public static function init() {
@@ -29,18 +29,18 @@ class WP_Entry_Index_Shortcode {
     public function register_scripts() {
         // Registrar y encolar CSS
         wp_register_style(
-            'wp-entry-index-public',
-            WP_ENTRY_INDEX_PLUGIN_URL . 'assets/css/public.css',
+            'personal-post-index-public',
+            PERSONAL_POST_INDEX_PLUGIN_URL . 'assets/css/public.css',
             array(),
-            filemtime(WP_ENTRY_INDEX_PLUGIN_DIR . 'assets/css/public.css')
+            filemtime(PERSONAL_POST_INDEX_PLUGIN_DIR . 'assets/css/public.css')
         );
         
         // Registrar JavaScript
         wp_register_script(
-            'wp-entry-index-public',
-            WP_ENTRY_INDEX_PLUGIN_URL . 'assets/js/public.js',
+            'personal-post-index-public',
+            PERSONAL_POST_INDEX_PLUGIN_URL . 'assets/js/public.js',
             array('jquery'),
-            filemtime(WP_ENTRY_INDEX_PLUGIN_DIR . 'assets/js/public.js'),
+            filemtime(PERSONAL_POST_INDEX_PLUGIN_DIR . 'assets/js/public.js'),
             true
         );
     }
@@ -61,31 +61,31 @@ class WP_Entry_Index_Shortcode {
         
         // Si no hay entradas, devolver mensaje
         if (empty($entries)) {
-            return '<p>' . __('No hay entradas disponibles.', 'WpEntryIndex') . '</p>';
+            return '<p>' . __('No hay entradas disponibles.', 'PersonalPostIndex') . '</p>';
         }
         
         // Encolar estilos y scripts
-        wp_enqueue_style('wp-entry-index-public');
-        wp_enqueue_script('wp-entry-index-public');
+        wp_enqueue_style('personal-post-index-public');
+        wp_enqueue_script('personal-post-index-public');
         
         // Iniciar buffer de salida
         ob_start();
         
         // Abrir contenedor
-        echo '<div class="wp-entry-index-container">';
+        echo '<div class="personal-post-index-container">';
         
         // Agregar buscador
-        echo '<div class="wp-entry-index-search-container">';
-        echo '<input type="text" id="wp-entry-index-search-input" placeholder="' . esc_attr__('Buscar...', 'WpEntryIndex') . '">';
-        echo '<ul id="wp-entry-index-autocomplete-results" style="display: none;"></ul>';
+        echo '<div class="personal-post-index-search-container">';
+        echo '<input type="text" id="personal-post-index-search-input" placeholder="' . esc_attr__('Buscar...', 'PersonalPostIndex') . '">';
+        echo '<ul id="personal-post-index-autocomplete-results" style="display: none;"></ul>';
         echo '</div>';
         
         // Abrir lista
-        echo '<ul class="wp-entry-index-list">';
+        echo '<ul class="personal-post-index-list">';
         
         // Recorrer entradas
         foreach ($entries as $entry) {
-            echo '<li class="wp-entry-index-item">';
+            echo '<li class="personal-post-index-item">';
             echo '<a href="' . esc_url($entry['url']) . '" target="_blank">';
             echo esc_html($entry['name']);
             echo '</a>';

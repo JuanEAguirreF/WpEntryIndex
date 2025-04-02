@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class WP_Entry_Index_Admin {
+class Personal_Post_Index_Admin {
     
     // Inicializar la clase
     public static function init() {
@@ -38,10 +38,10 @@ class WP_Entry_Index_Admin {
     public function add_admin_menu() {
         // Menú principal
         add_menu_page(
-            __('Índice de Entradas', 'WpEntryIndex'),
-            __('Índice de Entradas', 'WpEntryIndex'),
+            __('Índice de Entradas', 'PersonalPostIndex'),
+            __('Índice de Entradas', 'PersonalPostIndex'),
             'manage_options',
-            'WpEntryIndex',
+            'PersonalPostIndex',
             array($this, 'render_index_page'),
             'dashicons-list-view',
             30
@@ -49,21 +49,21 @@ class WP_Entry_Index_Admin {
         
         // Submenú Índice (mismo que el principal)
         add_submenu_page(
-            'WpEntryIndex',
-            __('Índice', 'WpEntryIndex'),
-            __('Índice', 'WpEntryIndex'),
+            'PersonalPostIndex',
+            __('Índice', 'PersonalPostIndex'),
+            __('Índice', 'PersonalPostIndex'),
             'manage_options',
-            'WpEntryIndex',
+            'PersonalPostIndex',
             array($this, 'render_index_page')
         );
         
         // Submenú Configuración
         add_submenu_page(
-            'WpEntryIndex',
-            __('Configuración', 'WpEntryIndex'),
-            __('Configuración', 'WpEntryIndex'),
+            'PersonalPostIndex',
+            __('Configuración', 'PersonalPostIndex'),
+            __('Configuración', 'PersonalPostIndex'),
             'manage_options',
-            'WpEntryIndex-settings',
+            'PersonalPostIndex-settings',
             array($this, 'render_settings_page')
         );
     }
@@ -71,74 +71,74 @@ class WP_Entry_Index_Admin {
     // Registrar scripts y estilos
     public function enqueue_scripts($hook) {
         // Cargar en las páginas del plugin
-        if ('toplevel_page_WpEntryIndex' !== $hook && 'indice-de-entradas_page_WpEntryIndex-settings' !== $hook) {
+        if ('toplevel_page_PersonalPostIndex' !== $hook && 'indice-de-entradas_page_PersonalPostIndex-settings' !== $hook) {
             return;
         }
         
         // Registrar estilos
         wp_enqueue_style(
-            'WpEntryIndex-admin',
-            WP_ENTRY_INDEX_PLUGIN_URL . 'assets/css/admin.css',
+            'PersonalPostIndex-admin',
+            PERSONAL_POST_INDEX_PLUGIN_URL . 'assets/css/admin.css',
             array(),
-            filemtime(WP_ENTRY_INDEX_PLUGIN_DIR . 'assets/css/admin.css')
+            filemtime(PERSONAL_POST_INDEX_PLUGIN_DIR . 'assets/css/admin.css')
         );
         
         // Solo cargar scripts en la página principal (índice)
-        if ('toplevel_page_WpEntryIndex' === $hook) {
+        if ('toplevel_page_PersonalPostIndex' === $hook) {
             // Registrar scripts
             wp_enqueue_script(
-                'WpEntryIndex-admin',
-                WP_ENTRY_INDEX_PLUGIN_URL . 'assets/js/admin.js',
+                'PersonalPostIndex-admin',
+                PERSONAL_POST_INDEX_PLUGIN_URL . 'assets/js/admin.js',
                 array('jquery'),
-                filemtime(WP_ENTRY_INDEX_PLUGIN_DIR . 'assets/js/admin.js'),
+                filemtime(PERSONAL_POST_INDEX_PLUGIN_DIR . 'assets/js/admin.js'),
                 true
             );
             
             // Pasar variables al script
             wp_localize_script(
-                'WpEntryIndex-admin',
+                'PersonalPostIndex-admin',
                 'wp_entry_index_vars',
                 array(
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce' => wp_create_nonce('wp_entry_index_nonce'),
                     'messages' => array(
-                        'confirm_delete' => __('¿Estás seguro de que deseas eliminar este elemento?', 'WpEntryIndex'),
-                        'error' => __('Ha ocurrido un error. Por favor, inténtalo de nuevo.', 'WpEntryIndex'),
-                        'success_add' => __('Elemento agregado correctamente.', 'WpEntryIndex'),
-                        'success_edit' => __('Elemento actualizado correctamente.', 'WpEntryIndex'),
-                        'success_delete' => __('Elemento eliminado correctamente.', 'WpEntryIndex'),
-                        'success_import' => __('Importación completada correctamente.', 'WpEntryIndex'),
-                        'error_import' => __('Error en la importación. Por favor, verifica el formato del archivo.', 'WpEntryIndex'),
-                        'add_title' => __('Agregar Entrada', 'WpEntryIndex'),
-                        'edit_title' => __('Editar Entrada', 'WpEntryIndex')
+                        'confirm_delete' => __('¿Estás seguro de que deseas eliminar este elemento?', 'PersonalPostIndex'),
+                        'error' => __('Ha ocurrido un error. Por favor, inténtalo de nuevo.', 'PersonalPostIndex'),
+                        'success_add' => __('Elemento agregado correctamente.', 'PersonalPostIndex'),
+                        'success_edit' => __('Elemento actualizado correctamente.', 'PersonalPostIndex'),
+                        'success_delete' => __('Elemento eliminado correctamente.', 'PersonalPostIndex'),
+                        'success_import' => __('Importación completada correctamente.', 'PersonalPostIndex'),
+                        'error_import' => __('Error en la importación. Por favor, verifica el formato del archivo.', 'PersonalPostIndex'),
+                        'add_title' => __('Agregar Entrada', 'PersonalPostIndex'),
+                        'edit_title' => __('Editar Entrada', 'PersonalPostIndex')
                     )
                 )
             );
         }
         
         // Cargar scripts en la página de configuración
-        if ('indice-de-entradas_page_WpEntryIndex-settings' === $hook) {
+        if ('indice-de-entradas_page_PersonalPostIndex-settings' === $hook) {
             // Registrar scripts
             wp_enqueue_script(
-                'WpEntryIndex-settings',
-                WP_ENTRY_INDEX_PLUGIN_URL . 'assets/js/settings.js',
+                'PersonalPostIndex-settings',
+                PERSONAL_POST_INDEX_PLUGIN_URL . 'assets/js/settings.js',
                 array('jquery'),
-                filemtime(WP_ENTRY_INDEX_PLUGIN_DIR . 'assets/js/settings.js'),
+                filemtime(PERSONAL_POST_INDEX_PLUGIN_DIR . 'assets/js/settings.js'),
                 true
             );
             
             // Pasar variables al script
             wp_localize_script(
-                'WpEntryIndex-settings',
+                'PersonalPostIndex-settings',
                 'wp_entry_index_settings_vars',
                 array(
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce' => wp_create_nonce('wp_entry_index_settings_nonce'),
                     'messages' => array(
-                        'error' => __('Ha ocurrido un error. Por favor, inténtalo de nuevo.', 'WpEntryIndex'),
-                        'success_save' => __('Configuración guardada correctamente.', 'WpEntryIndex'),
-                        'no_results' => __('No se encontraron categorías.', 'WpEntryIndex'),
-                        'searching' => __('Buscando...', 'WpEntryIndex')
+                        'error' => __('Ha ocurrido un error. Por favor, inténtalo de nuevo.', 'PersonalPostIndex'),
+                        'success_save' => __('Configuración guardada correctamente.', 'PersonalPostIndex'),
+                        'no_results' => __('No se encontraron categorías.', 'PersonalPostIndex'),
+                        'searching' => __('Buscando...', 'PersonalPostIndex')
                     )
                 )
             );
@@ -170,7 +170,7 @@ class WP_Entry_Index_Admin {
         $total_pages = ceil($total_entries / $per_page);
         
         // Incluir template
-        include WP_ENTRY_INDEX_PLUGIN_DIR . 'includes/admin/views/admin-page.php';
+        include PERSONAL_POST_INDEX_PLUGIN_DIR . 'includes/admin/views/admin-page.php';
     }
     
     // Renderizar página de configuración
@@ -181,7 +181,7 @@ class WP_Entry_Index_Admin {
         }
         
         // Incluir template
-        include WP_ENTRY_INDEX_PLUGIN_DIR . 'includes/admin/views/settings-page.php';
+        include PERSONAL_POST_INDEX_PLUGIN_DIR . 'includes/admin/views/settings-page.php';
     }
     
     // Obtener entradas con paginación y búsqueda
@@ -274,7 +274,7 @@ class WP_Entry_Index_Admin {
         
         // Verificar permisos
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'PersonalPostIndex')));
         }
         
         // Obtener datos
@@ -283,7 +283,7 @@ class WP_Entry_Index_Admin {
         
         // Validar datos
         if (empty($name) || empty($url)) {
-            wp_send_json_error(array('message' => __('El nombre y la URL son obligatorios.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('El nombre y la URL son obligatorios.', 'PersonalPostIndex')));
         }
         
         // Insertar en la base de datos
@@ -302,7 +302,7 @@ class WP_Entry_Index_Admin {
         );
         
         if (false === $result) {
-            wp_send_json_error(array('message' => __('Error al guardar los datos.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('Error al guardar los datos.', 'PersonalPostIndex')));
         }
         
         // Invalidar caché de listas de entradas
@@ -331,10 +331,10 @@ class WP_Entry_Index_Admin {
         
         // Agregar información del usuario
         $user = get_userdata($entry['created_by']);
-        $entry['created_by_name'] = $user ? $user->display_name : __('Usuario desconocido', 'WpEntryIndex');
+        $entry['created_by_name'] = $user ? $user->display_name : __('Usuario desconocido', 'PersonalPostIndex');
         
         wp_send_json_success(array(
-            'message' => __('Entrada agregada correctamente.', 'WpEntryIndex'),
+            'message' => __('Entrada agregada correctamente.', 'PersonalPostIndex'),
             'entry' => $entry
         ));
     }
@@ -346,7 +346,7 @@ class WP_Entry_Index_Admin {
         
         // Verificar permisos
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'PersonalPostIndex')));
         }
         
         // Obtener datos
@@ -356,7 +356,7 @@ class WP_Entry_Index_Admin {
         
         // Validar datos
         if (empty($id) || empty($name) || empty($url)) {
-            wp_send_json_error(array('message' => __('Todos los campos son obligatorios.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('Todos los campos son obligatorios.', 'PersonalPostIndex')));
         }
         
         // Actualizar en la base de datos
@@ -377,7 +377,7 @@ class WP_Entry_Index_Admin {
         );
         
         if (false === $result) {
-            wp_send_json_error(array('message' => __('Error al actualizar los datos.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('Error al actualizar los datos.', 'PersonalPostIndex')));
         }
         
         // Obtener la entrada actualizada
@@ -403,13 +403,13 @@ class WP_Entry_Index_Admin {
         
         // Agregar información de los usuarios
         $created_user = get_userdata($entry['created_by']);
-        $entry['created_by_name'] = $created_user ? $created_user->display_name : __('Usuario desconocido', 'WpEntryIndex');
+        $entry['created_by_name'] = $created_user ? $created_user->display_name : __('Usuario desconocido', 'PersonalPostIndex');
         
         $modified_user = get_userdata($entry['modified_by']);
-        $entry['modified_by_name'] = $modified_user ? $modified_user->display_name : __('Usuario desconocido', 'WpEntryIndex');
+        $entry['modified_by_name'] = $modified_user ? $modified_user->display_name : __('Usuario desconocido', 'PersonalPostIndex');
         
         wp_send_json_success(array(
-            'message' => __('Entrada actualizada correctamente.', 'WpEntryIndex'),
+            'message' => __('Entrada actualizada correctamente.', 'PersonalPostIndex'),
             'entry' => $entry
         ));
     }
@@ -421,7 +421,7 @@ class WP_Entry_Index_Admin {
         
         // Verificar permisos
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'PersonalPostIndex')));
         }
         
         // Obtener ID
@@ -429,7 +429,7 @@ class WP_Entry_Index_Admin {
         
         // Validar ID
         if (empty($id)) {
-            wp_send_json_error(array('message' => __('ID no válido.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('ID no válido.', 'PersonalPostIndex')));
         }
         
         // Eliminar de la base de datos
@@ -443,7 +443,7 @@ class WP_Entry_Index_Admin {
         );
         
         if (false === $result) {
-            wp_send_json_error(array('message' => __('Error al eliminar la entrada.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('Error al eliminar la entrada.', 'PersonalPostIndex')));
         }
         
         // Invalidar caché relacionada con esta entrada
@@ -461,7 +461,7 @@ class WP_Entry_Index_Admin {
         }
         
         wp_send_json_success(array(
-            'message' => __('Entrada eliminada correctamente.', 'WpEntryIndex'),
+            'message' => __('Entrada eliminada correctamente.', 'PersonalPostIndex'),
             'id' => $id
         ));
     }
@@ -473,7 +473,7 @@ class WP_Entry_Index_Admin {
         
         // Verificar permisos
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'PersonalPostIndex')));
         }
         
         // Obtener ID
@@ -481,7 +481,7 @@ class WP_Entry_Index_Admin {
         
         // Validar ID
         if (empty($id)) {
-            wp_send_json_error(array('message' => __('ID no válido.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('ID no válido.', 'PersonalPostIndex')));
         }
         
         // Obtener de la base de datos
@@ -512,7 +512,7 @@ class WP_Entry_Index_Admin {
         }
         
         if (null === $entry) {
-            wp_send_json_error(array('message' => __('Entrada no encontrada.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('Entrada no encontrada.', 'PersonalPostIndex')));
         }
         
         wp_send_json_success(array(
@@ -527,25 +527,25 @@ class WP_Entry_Index_Admin {
         
         // Verificar permisos
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'PersonalPostIndex')));
         }
         
         // Verificar si se ha subido un archivo
         if (empty($_FILES['csv_file'])) {
-            wp_send_json_error(array('message' => __('No se ha seleccionado ningún archivo.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('No se ha seleccionado ningún archivo.', 'PersonalPostIndex')));
         }
         
         $file = $_FILES['csv_file'];
         
         // Verificar errores de subida
         if ($file['error'] !== UPLOAD_ERR_OK) {
-            wp_send_json_error(array('message' => __('Error al subir el archivo.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('Error al subir el archivo.', 'PersonalPostIndex')));
         }
         
         // Verificar tipo de archivo
         $file_type = wp_check_filetype(basename($file['name']), array('csv' => 'text/csv'));
         if (!$file_type['ext']) {
-            wp_send_json_error(array('message' => __('El archivo debe ser un CSV válido.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('El archivo debe ser un CSV válido.', 'PersonalPostIndex')));
         }
         
         // Usar WP_Filesystem en lugar de fopen
@@ -558,7 +558,7 @@ class WP_Entry_Index_Admin {
         // Leer el contenido del archivo
         $file_content = $wp_filesystem->get_contents($file['tmp_name']);
         if (false === $file_content) {
-            wp_send_json_error(array('message' => __('No se pudo abrir el archivo.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('No se pudo abrir el archivo.', 'PersonalPostIndex')));
         }
         
         // Convertir el contenido a un array de líneas
@@ -611,7 +611,7 @@ class WP_Entry_Index_Admin {
             if (count($data) < 2) {
                 $stats['error']++;
                 /* translators: %d: número de línea en el archivo CSV */
-                $stats['errors'][] = sprintf(__('Línea %d: Formato incorrecto.', 'WpEntryIndex'), $row_count);
+                $stats['errors'][] = sprintf(__('Línea %d: Formato incorrecto.', 'PersonalPostIndex'), $row_count);
                 continue;
             }
             
@@ -623,7 +623,7 @@ class WP_Entry_Index_Admin {
             if (empty($name) || empty($url)) {
                 $stats['error']++;
                 /* translators: %d: número de línea en el archivo CSV */
-                $stats['errors'][] = sprintf(__('Línea %d: Nombre o URL vacíos.', 'WpEntryIndex'), $row_count);
+                $stats['errors'][] = sprintf(__('Línea %d: Nombre o URL vacíos.', 'PersonalPostIndex'), $row_count);
                 continue;
             }
             
@@ -651,7 +651,7 @@ class WP_Entry_Index_Admin {
     
             if (false === $result) {
                 wp_send_json_error(array(
-                    'message' => __('Error al guardar los datos en la base de datos.', 'WpEntryIndex'),
+                    'message' => __('Error al guardar los datos en la base de datos.', 'PersonalPostIndex'),
                     'stats' => $stats
                 ));
             }
@@ -675,7 +675,7 @@ class WP_Entry_Index_Admin {
         wp_send_json_success(array(
             'message' => sprintf(
                 /* translators: %1$d: número total de entradas, %2$d: número de entradas importadas con éxito, %3$d: número de entradas con error */
-                __('Importación completada. Total: %1$d, Éxito: %2$d, Error: %3$d', 'WpEntryIndex'),
+                __('Importación completada. Total: %1$d, Éxito: %2$d, Error: %3$d', 'PersonalPostIndex'),
                 $stats['total'],
                 $stats['success'],
                 $stats['error']
@@ -691,7 +691,7 @@ class WP_Entry_Index_Admin {
         
         // Verificar permisos
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'PersonalPostIndex')));
         }
         
         // Obtener término de búsqueda
@@ -734,7 +734,7 @@ class WP_Entry_Index_Admin {
         
         // Verificar permisos
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'WpEntryIndex')));
+            wp_send_json_error(array('message' => __('No tienes permisos para realizar esta acción.', 'PersonalPostIndex')));
         }
         
         // Obtener categorías seleccionadas
@@ -801,7 +801,7 @@ class WP_Entry_Index_Admin {
         update_option('wp_entry_index_settings', $sanitized_settings);
         
         wp_send_json_success(array(
-            'message' => __('Configuración guardada correctamente.', 'WpEntryIndex'),
+            'message' => __('Configuración guardada correctamente.', 'PersonalPostIndex'),
             'settings' => $sanitized_settings,
             'categories' => $sanitized_categories
         ));

@@ -1,4 +1,4 @@
-.wp-entry-index-container {
+.personal-post-index-container {
     margin: 20px 0;
     padding: 15px;
     background-color: #f9f9f9;
@@ -7,12 +7,12 @@
 }
 
 /* Estilos para el buscador */
-.wp-entry-index-search-container {
+.personal-post-index-search-container {
     margin-bottom: 15px;
     position: relative;
 }
 
-#wp-entry-index-search-input {
+#personal-post-index-search-input {
     width: 100%;
     padding: 8px 12px;
     border: 1px solid #ddd;
@@ -21,14 +21,14 @@
     box-sizing: border-box;
 }
 
-#wp-entry-index-search-input:focus {
+#personal-post-index-search-input:focus {
     outline: none;
     border-color: #0073aa;
     box-shadow: 0 0 3px rgba(0, 115, 170, 0.3);
 }
 
 /* Estilos para el autocompletado */
-#wp-entry-index-autocomplete-results {
+#personal-post-index-autocomplete-results {
     position: absolute;
     width: 100%;
     max-height: 300px;
@@ -42,59 +42,59 @@
     display: none;
 }
 
-#wp-entry-index-autocomplete-results li {
+#personal-post-index-autocomplete-results li {
     padding: 8px 12px;
     cursor: pointer;
     list-style: none;
     border-bottom: 1px solid #eee;
 }
 
-#wp-entry-index-autocomplete-results li:last-child {
+#personal-post-index-autocomplete-results li:last-child {
     border-bottom: none;
 }
 
-#wp-entry-index-autocomplete-results li:hover {
+#personal-post-index-autocomplete-results li:hover {
     background-color: #f5f5f5;
 }
 
-#wp-entry-index-autocomplete-results li.autocomplete-item {
+#personal-post-index-autocomplete-results li.autocomplete-item {
     color: #333;
 }
 
-#wp-entry-index-autocomplete-results li.no-results {
+#personal-post-index-autocomplete-results li.no-results {
     color: #888;
     font-style: italic;
     cursor: default;
 }
 
-#wp-entry-index-autocomplete-results li.show-more {
+#personal-post-index-autocomplete-results li.show-more {
     color: #0073aa;
     font-weight: bold;
     text-align: center;
 }
 
-.wp-entry-index-list {
+.personal-post-index-list {
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
 
-.wp-entry-index-item {
+.personal-post-index-item {
     padding: 8px 0;
     border-bottom: 1px solid #eee;
 }
 
-.wp-entry-index-item:last-child {
+.personal-post-index-item:last-child {
     border-bottom: none;
 }
 
-.wp-entry-index-item a {
+.personal-post-index-item a {
     text-decoration: none;
     color: #0073aa;
     transition: color 0.3s ease;
 }
 
-.wp-entry-index-item a:hover {
+.personal-post-index-item a:hover {
     color: #00a0d2;
     text-decoration: underline;
 }

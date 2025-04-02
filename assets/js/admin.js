@@ -4,19 +4,19 @@
     // Cuando el DOM esté listo
     $(document).ready(function() {
         // Referencias a elementos del DOM
-        const $modal = $('#wp-entry-index-modal');
-        const $importModal = $('#wp-entry-index-import-modal');
-        const $form = $('#wp-entry-index-form');
-        const $importForm = $('#wp-entry-index-import-form');
-        const $modalTitle = $('#wp-entry-index-modal-title');
-        const $idField = $('#wp-entry-index-id');
-        const $nameField = $('#wp-entry-index-name');
-        const $urlField = $('#wp-entry-index-url');
-        const $tableBody = $('#wp-entry-index-table-body');
-        const $notice = $('#wp-entry-index-notice');
-        const $importResults = $('#wp-entry-index-import-results');
-        const $importSummary = $('#wp-entry-index-import-summary');
-        const rowTemplate = $('#wp-entry-index-row-template').html();
+        const $modal = $('#personal-post-index-modal');
+        const $importModal = $('#personal-post-index-import-modal');
+        const $form = $('#personal-post-index-form');
+        const $importForm = $('#personal-post-index-import-form');
+        const $modalTitle = $('#personal-post-index-modal-title');
+        const $idField = $('#personal-post-index-id');
+        const $nameField = $('#personal-post-index-name');
+        const $urlField = $('#personal-post-index-url');
+        const $tableBody = $('#personal-post-index-table-body');
+        const $notice = $('#personal-post-index-notice');
+        const $importResults = $('#personal-post-index-import-results');
+        const $importSummary = $('#personal-post-index-import-summary');
+        const rowTemplate = $('#personal-post-index-row-template').html();
         
         // Función para mostrar notificaciones
         function showNotice(message, type) {
@@ -75,17 +75,17 @@
         }
         
         // Evento: Clic en botón Agregar
-        $('#wp-entry-index-add-button').on('click', function() {
+        $('#personal-post-index-add-button').on('click', function() {
             openModal(wp_entry_index_vars.messages.add_title || 'Agregar Entrada');
         });
         
         // Evento: Clic en botón Importar CSV
-        $('#wp-entry-index-import-button').on('click', function() {
+        $('#personal-post-index-import-button').on('click', function() {
             openImportModal();
         });
         
         // Evento: Clic en botón Editar
-        $tableBody.on('click', '.wp-entry-index-edit', function() {
+        $tableBody.on('click', '.personal-post-index-edit', function() {
             const entryId = $(this).data('id');
             
             // Obtener datos de la entrada
@@ -119,7 +119,7 @@
         });
         
         // Evento: Clic en botón Borrar
-        $tableBody.on('click', '.wp-entry-index-delete', function() {
+        $tableBody.on('click', '.personal-post-index-delete', function() {
             const entryId = $(this).data('id');
             
             // Confirmar eliminación
@@ -157,8 +157,8 @@
         });
         
         // Evento: Cerrar modal (X)
-        $('.wp-entry-index-modal-close').on('click', function() {
-            if ($(this).closest('.wp-entry-index-modal').is($importModal)) {
+        $('.personal-post-index-modal-close').on('click', function() {
+            if ($(this).closest('.personal-post-index-modal').is($importModal)) {
                 closeImportModal();
             } else {
                 closeModal();
@@ -166,8 +166,8 @@
         });
         
         // Evento: Cerrar modal (botón Cancelar)
-        $('.wp-entry-index-modal-cancel').on('click', function() {
-            if ($(this).closest('.wp-entry-index-modal').is($importModal)) {
+        $('.personal-post-index-modal-cancel').on('click', function() {
+            if ($(this).closest('.personal-post-index-modal').is($importModal)) {
                 closeImportModal();
             } else {
                 closeModal();
@@ -175,7 +175,7 @@
         });
         
         // Evento: Cerrar modal (clic fuera del contenido)
-        $('.wp-entry-index-modal').on('click', function(e) {
+        $('.personal-post-index-modal').on('click', function(e) {
             if (e.target === this) {
                 if ($(this).is($importModal)) {
                     closeImportModal();
@@ -253,7 +253,7 @@
             formData.append('nonce', wp_entry_index_vars.nonce);
             
             // Añadir opción de omitir encabezados
-            const skipHeader = $('#wp-entry-index-skip-header').is(':checked');
+            const skipHeader = $('#personal-post-index-skip-header').is(':checked');
             formData.append('skip_header', skipHeader ? '1' : '0');
             
             // Mostrar mensaje de carga
